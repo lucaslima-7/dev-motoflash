@@ -7,8 +7,11 @@ import LoginForm from "../../components/login/LoginForm";
 
 const styles = theme => ({
   mainBackground: {
+    backgroundImage: "url(assets/images/main-wallpaper.jpg)",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
     height: "100vh",
-    background: "linear-gradient(to right, #ff3636, #ff5551, #ff6f6b, #ff8684, #ff9c9c);"
   }
 })
 
@@ -24,7 +27,7 @@ const MainPage = ({ classes, history }) => {
 
 
   return (
-    <Grid container justify={"center"} className={clsx(classes.mainBackground, "py-40")}>
+    <Grid container justify={"flex-start"} alignContent={"center"} className={clsx(classes.mainBackground, "py-40 px-80")}>
       <Grid item xs={10} sm={5} md={4} lg={3}>
         <LoginForm />
       </Grid>

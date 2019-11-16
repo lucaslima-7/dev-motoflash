@@ -12,7 +12,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { logoutUser, registerWithFirebase, submitLoginWithFireBase } from 'app/api/ApiFirebase'
+import { registerWithFirebase, submitLoginWithFireBase } from 'app/api/ApiFirebase'
 
 const LoginForm = ({ history }) => {
   const [step, setStep] = useState(0);
@@ -32,12 +32,7 @@ const LoginForm = ({ history }) => {
   return (
     <>
       <Paper className={"rounded-8 shadow-lg p-10"}>
-        {/* TODO BackOffice Logo */}
-        <Grid item xs={12} className={"my-8"}>
-          <Typography color="primary" variant="h4" className={"text-center font-700"}>
-            Foodie Backoffice
-          </Typography>
-        </Grid>
+        {/* TODO Logo Motoflash */}
         <Grid container justify="center">
           {step === 0 && (
             <>
@@ -45,7 +40,7 @@ const LoginForm = ({ history }) => {
                 <TextField
                   fullWidth
                   id="email-login"
-                  label="Email"
+                  label="E-mail"
                   variant="outlined"
                   value={loginData.email}
                   onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
@@ -57,7 +52,7 @@ const LoginForm = ({ history }) => {
                   fullWidth
                   id="password-login"
                   margin={"dense"}
-                  label="Password"
+                  label="Senha"
                   variant="outlined"
                   type={showPassword ? 'text' : 'password'}
                   value={loginData.password}
@@ -86,7 +81,7 @@ const LoginForm = ({ history }) => {
                   variant="body1"
                   onClick={() => setStep(2)}
                 >
-                  Forgot Password?
+                  Esqueceu a Senha?
                 </Link>
               </Grid>
               <Grid item xs={12}>
@@ -97,7 +92,7 @@ const LoginForm = ({ history }) => {
                   className={"float-right"}
                   variant="contained"
                   onClick={() => submitLoginWithFireBase({ email: loginData.email, password: loginData.password })}>
-                  {loading ? "Verifying..." : "Sign In"}
+                  {loading ? "Verificando..." : "Login"}
                 </Button>
               </Grid>
             </>
@@ -108,7 +103,7 @@ const LoginForm = ({ history }) => {
                 <TextField
                   fullWidth
                   id="username"
-                  label="Username"
+                  label="Nome"
                   variant="outlined"
                   value={signUpData.username}
                   onChange={(e) => setSignUpData({ ...signUpData, username: e.target.value })}
@@ -131,7 +126,7 @@ const LoginForm = ({ history }) => {
                   fullWidth
                   id="password-signup"
                   margin={"dense"}
-                  label="Password"
+                  label="Senha"
                   variant="outlined"
                   type={showPassword ? 'text' : 'password'}
                   value={signUpData.password}
@@ -157,7 +152,7 @@ const LoginForm = ({ history }) => {
                   fullWidth
                   id="password-confirm"
                   margin={"dense"}
-                  label="Confirm Password"
+                  label="Confirme a Senha"
                   variant="outlined"
                   type={'password'}
                   value={signUpData.confirmPassword}
@@ -172,7 +167,7 @@ const LoginForm = ({ history }) => {
                   className={"float-right"}
                   variant="contained"
                   onClick={() => registerWithFirebase({ email: signUpData.email, password: signUpData.password })}>
-                  {loading ? "Creating..." : "Sign Up"}
+                  {loading ? "Criando..." : "Criar Conta"}
                 </Button>
               </Grid>
             </>
@@ -181,8 +176,8 @@ const LoginForm = ({ history }) => {
             <>
               <Grid item xs={12}>
                 <Typography variant="body1">
-                  Enter your email so we can send you a password
-                  recover link!
+                  Coloque seu email e clique em recuperar senha
+                  para que possamos enviar um email com as instruções!
                 </Typography>
               </Grid>
               <Grid item xs={12} className={"my-8"}>
@@ -204,7 +199,7 @@ const LoginForm = ({ history }) => {
                   className={"float-right"}
                   variant="contained"
                   onClick={() => console.log("Clicado")}>
-                  {loading ? "Loading..." : "Send Recover Link"}
+                  {loading ? "Enviando..." : "Recuperar Senha"}
                 </Button>
               </Grid>
             </>
@@ -218,7 +213,7 @@ const LoginForm = ({ history }) => {
               <>
                 <Grid item xs={6}>
                   <Typography>
-                    New here?
+                    Novo usuário?
                 </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -228,7 +223,7 @@ const LoginForm = ({ history }) => {
                     className="float-right"
                     variant="contained"
                     onClick={() => setStep(1)}>
-                    Request Access
+                    Cadastrar
                   <FontAwesomeIcon icon={faChevronRight} className={"ml-8"} />
                   </Button>
                 </Grid>
@@ -238,7 +233,7 @@ const LoginForm = ({ history }) => {
               <>
                 <Grid item xs={6}>
                   <Typography>
-                    Do you have an account?
+                    Já é cadastrado?
                 </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -249,7 +244,7 @@ const LoginForm = ({ history }) => {
                     variant="contained"
                     onClick={() => setStep(0)}>
                     <FontAwesomeIcon icon={faChevronLeft} className={"mr-8"} />
-                    Sign In
+                    Fazer Login
                 </Button>
                 </Grid>
               </>

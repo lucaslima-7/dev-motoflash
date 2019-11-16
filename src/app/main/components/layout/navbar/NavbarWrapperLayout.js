@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import NavbarLayout from './NavbarLayout';
 import { useSelector } from 'react-redux';
 
-const navbarWidth = 200;
+const navbarWidth = 220;
 
 const styles = theme => ({
   wrapper: {

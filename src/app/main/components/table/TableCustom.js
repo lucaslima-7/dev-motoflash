@@ -11,10 +11,6 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  ExpansionPanelActions,
   Typography,
   IconButton
 } from "@material-ui/core"
@@ -24,17 +20,10 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MTableToolbar } from "material-table";
 import { getLongFromDate, unixtimestampToDate } from "app/utils/DateUtil";
 import { Event } from "@material-ui/icons";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 const styles = () => ({
   root: {
     padding: 0
-  },
-  expansionPanel: {
-    paddingBottom: 8,
-    paddingTop: 0
   }
 })
 
@@ -99,27 +88,6 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
                     <MTableToolbar {...props} searchFieldStyle={{ minWidth: 200 }} />
                   </Grid>
                 </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                {filterChips && (
-                  <ExpansionPanel style={{
-                    boxShadow: "none",
-                    borderRadius: 0,
-                  }}>
-                    <ExpansionPanelSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Typography className={"italic"}><FontAwesomeIcon icon={faFilter} /> Filters</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.expansionPanel}>
-                      <Grid item xs={12} className={"float-left"}>
-                        {filterChips}
-                      </Grid>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                )}
               </Grid>
             </Grid>
           )

@@ -23,16 +23,16 @@ const defaultTheme = {
   palette: {
     type: "light",
     primary: {
-      light: "#FF4D4D",
-      main: "#FF3636",
-      dark: "#D60909",
+      light: "#80AAFF",
+      main: "#2E6FF2",
+      dark: "#3B6DD4",
       contrastText: "#212121"
     },
     secondary: {
       light: "#c1c1c1",
-      main: "#FF9C9C",
+      main: "#6EFFF3",
       dark: "#181818",
-      contrastText: "#FFF"
+      contrastText: "#212121"
     }
   }
 }

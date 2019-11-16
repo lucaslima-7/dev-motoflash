@@ -4,15 +4,12 @@ import { makeStyles } from '@material-ui/styles';
 import NavLinkAdapter from './NavLinkAdapter';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import includes from 'lodash/includes';
 
 const useStyles = makeStyles(theme => ({
   item: {
     height: 40,
-    width: 'calc(100% - 16px)',
-    borderRadius: '0 20px 20px 0',
     paddingRight: 12,
     '&.active': {
       backgroundColor: theme.palette.secondary.main,
@@ -40,7 +37,8 @@ const useStyles = makeStyles(theme => ({
 
 const NavItem = (props) => {
   const { role } = useSelector(({ bk }) => bk.user);
-
+  const { navMenu } = useSelector(({ bk }) => bk);
+  const folded = navMenu.folded;
   const classes = useStyles(props);
   const { item, nestedLevel, active } = props;
   let paddingValue = 40 + (nestedLevel * 16);
@@ -55,28 +53,18 @@ const NavItem = (props) => {
       button
       component={NavLinkAdapter}
       to={item.url}
-      activeClassName="active"
+      activeClassName="active square"
       className={clsx(classes.item, listItemPadding, 'list-item', active)}
       exact={item.exact}
     >
       {item.icon && (
-        <Icon className="list-item-icon text-16 flex-shrink-0 mr-16" color="action">{item.icon}</Icon>
+        <Icon className="list-item-icon text-20 flex-shrink-0 mr-16" color="action">{item.icon}</Icon>
       )}
-      <ListItemText className="list-item-text" primary={item.title} classes={{ primary: 'text-14 list-item-text-primary' }} />
+      {!folded && (
+        <ListItemText className="list-item-text" primary={item.title} classes={{ primary: 'text-16 list-item-text-primary' }} />
+      )}
     </ListItem>
   );
 }
-
-NavItem.propTypes = {
-  item: PropTypes.shape(
-    {
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string,
-      icon: PropTypes.string,
-      url: PropTypes.string
-    })
-};
-
-NavItem.defaultProps = {};
 
 export default withRouter(React.memo(NavItem));
