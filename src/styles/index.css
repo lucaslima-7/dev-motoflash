@@ -1,0 +1,24 @@
+@import 'normalize.css';
+
+* {
+    outline: none !important;
+}
+
+html {
+    font-size: 62.5%;
+    font-family: Quicksand, Muli, Roboto, Helvetica Neue, Arial, sans-serif;
+}
+
+body {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+@import 'tailwind.css';
