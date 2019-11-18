@@ -12,7 +12,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { registerWithFirebase, submitLoginWithFireBase } from 'app/api/ApiFirebase'
+import firebaseService from "app/config/firebase/index";
+import MessageAlert from "../snackbar/MessageAlert";
 
 const LoginForm = ({ history }) => {
   const [step, setStep] = useState(0);
@@ -28,6 +29,34 @@ const LoginForm = ({ history }) => {
     confirmPassword: ""
   })
   const [showPassword, setShowPassword] = useState(false);
+
+  const submitLoginWithFireBase = ({ email, password }) => {
+    setLoading(true)
+    firebaseService.auth &&
+      firebaseService.auth.signInWithEmailAndPassword(email, password)
+        .then((response) => {
+          setLoading(false)
+          history.push('/users')
+          return (
+            <MessageAlert variant="success" message={"Login realizado com sucesso"} />
+          )
+        })
+        .catch(error => {
+          console.log("Erro", error)
+          setLoading(false)
+        });
+  }
+
+  const registerWithFirebase = ({ email, password }) => {
+    firebaseService.auth && firebaseService.auth.createUserWithEmailAndPassword(email, password)
+      .then(response => {
+        console.log("Sucesso", response)
+        history.push('/users')
+      })
+      .catch(error => {
+        console.log("Erro", error)
+      });
+  }
 
   return (
     <>

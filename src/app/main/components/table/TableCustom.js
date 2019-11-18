@@ -61,11 +61,29 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
         columns={config.columns}
         tableRef={forwardedRef}
         data={data}
-        style={style}
+        style={{ boxShadow: "none", border: "1px solid lightgrey" }}
         title={""}
         options={options}
         searchFieldStyle={config.searchFieldStyle}
         actions={actions}
+        localization={{
+          pagination: {
+            labelRowsSelect: 'Linhas',
+            labelDisplayedRows: 'Mostrando {from}-{to} de {count} Registros'
+          },
+          toolbar: {
+            nRowsSelected: '{0} linha(s) selecionadas'
+          },
+          header: {
+            actions: 'Ações'
+          },
+          body: {
+            emptyDataSourceMessage: 'Nenhum dado encontrado',
+            filterRow: {
+              filterTooltip: 'Filter'
+            }
+          }
+        }}
         components={{
           Toolbar: props => (
             <Grid container>

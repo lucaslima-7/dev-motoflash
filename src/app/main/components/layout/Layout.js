@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     overflow: 'hidden',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: "#FFF",
     color: theme.palette.text.primary,
     scrollContent: {
       '& $wrapper': {},

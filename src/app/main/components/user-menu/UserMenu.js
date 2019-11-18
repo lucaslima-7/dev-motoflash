@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Avatar, Button, Icon, ListItemIcon, ListItemText, Popover, MenuItem, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { logoutUser } from 'app/api/ApiFirebase'
+import firebaseService from "app/config/firebase/index";
 
-const UserMenu = (props) => {
+const UserMenu = () => {
   const { user } = useSelector(({ bk }) => bk);
 
   const [userMenu, setUserMenu] = useState(null);
@@ -15,6 +15,10 @@ const UserMenu = (props) => {
   const userMenuClose = () => {
     setUserMenu(null);
   };
+
+  const logoutUser = () => {
+    firebaseService.signOut()
+  }
 
   return (
     <React.Fragment>
@@ -61,7 +65,7 @@ const UserMenu = (props) => {
       >
         <MenuItem
           onClick={() => {
-            logoutUser()
+            logoutUser();
             userMenuClose();
           }}
         >
@@ -75,4 +79,4 @@ const UserMenu = (props) => {
   );
 }
 
-export default UserMenu;
+export default React.memo(UserMenu);

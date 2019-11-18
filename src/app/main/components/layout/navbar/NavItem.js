@@ -58,7 +58,7 @@ const NavItem = (props) => {
       exact={item.exact}
     >
       {item.icon && (
-        <Icon className="list-item-icon text-20 flex-shrink-0 mr-16" color="action">{item.icon}</Icon>
+        <div className="list-item-icon text-18 flex-shrink-0 mr-16 min-w-24" color="action">{item.icon()}</div>
       )}
       {!folded && (
         <ListItemText className="list-item-text" primary={item.title} classes={{ primary: 'text-16 list-item-text-primary' }} />

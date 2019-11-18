@@ -1,6 +1,7 @@
+import history from "@history";
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/database';
+import 'firebase/firestore';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -19,31 +20,9 @@ class firebaseService {
       return;
     }
     firebase.initializeApp(config);
-    this.db = firebase.database();
+    this.db = firebase.firestore();
     this.auth = firebase.auth();
   }
-
-  getUserData = (userId) => {
-    if (!firebase.apps.length) {
-      return;
-    }
-    return new Promise((resolve, reject) => {
-      this.db.ref(`users/${userId}`)
-        .once('value')
-        .then((snapshot) => {
-          const user = snapshot.val();
-          resolve(user);
-        });
-    });
-  };
-
-  updateUserData = (user) => {
-    if (!firebase.apps.length) {
-      return;
-    }
-    return this.db.ref(`users/${user.uid}`)
-      .set(user);
-  };
 
   onAuthStateChanged = (callback) => {
     if (!this.auth) {
@@ -52,11 +31,86 @@ class firebaseService {
     this.auth.onAuthStateChanged(callback);
   };
 
+  getAllUsers = () => {
+    const usersCollection = this.db.collection("users")
+    if (!firebase.apps.length) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      usersCollection.get()
+        .then((snapshot) => {
+          const users = snapshot.docs.map(doc => doc.data())
+          resolve(users)
+        })
+    })
+  }
+
+  getAllCouriers = () => {
+    const couriersCollection = this.db.collection("couriers")
+    if (!firebase.apps.length) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      couriersCollection.get()
+        .then((snapshot) => {
+          const couriers = snapshot.docs.map(doc => doc.data())
+          resolve(couriers)
+        })
+    })
+  }
+
+  getAllCompanies = () => {
+    const companiesCollection = this.db.collection("companies")
+    if (!firebase.app.length) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      companiesCollection.get()
+        .then((snapshot) => {
+          const companies = snapshot.docs.map(doc => doc.data())
+          console.log(companies)
+          resolve(companies)
+        })
+    })
+  }
+
+  getAllWorkOrders = () => {
+    const workOrdersCollection = this.db.collection("workOrders")
+    if (!firebase.apps.length) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      workOrdersCollection.get()
+        .then((snapshot) => {
+          const workOrders = snapshot.docs.map(doc => doc.data())
+          console.log(workOrders)
+          resolve(workOrders)
+        })
+    })
+  }
+
+  getAllQuotations = () => {
+    const quotationsCollection = this.db.collection("quotations")
+    if (!firebase.apps.length) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      quotationsCollection.get()
+        .then((snapshot) => {
+          const quotations = snapshot.docs.map(doc => doc.data())
+          console.log(quotations)
+          resolve(quotations)
+        })
+    })
+  }
+
   signOut = () => {
     if (!this.auth) {
       return;
     }
-    this.auth.signOut();
+    this.auth.signOut().then(() => {
+      history.push('/')
+    });
   }
 }
 

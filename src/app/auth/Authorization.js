@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as Actions from "app/store/actions";
+import history from "@history";
 import firebaseService from "app/config/firebase/index";
 
 class Authorization extends Component {
@@ -18,11 +19,12 @@ class Authorization extends Component {
         const user = {
           uid: authUser.uid,
           role: "admin",
-          displayName: "Lucas Lima",
+          displayName: authUser.displayName ? authUser.displayName : "User",
           email: authUser.email,
-          profilePic: "assets/images/avatar/10475677_319009534926117_5334358475578712444_n (1).jpg"
+          profilePic: "assets/images/avatar/profile.jpg"
         }
         this.props.setUserData(user)
+        history.push('/users')
         // TODO Snackbar Logando...
         // firebaseService.getUserData(authUser.uid).then(user => {
         //   console.log(user, authUser);

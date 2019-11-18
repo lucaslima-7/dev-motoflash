@@ -1,6 +1,9 @@
 const pageAccess = {
   users: ['admin'],
-  courriers: ['admin']
+  couriers: ['admin'],
+  trips: ['admin'],
+  payments: ['admin'],
+  location: ['admin']
 };
 
 export default pageAccess;

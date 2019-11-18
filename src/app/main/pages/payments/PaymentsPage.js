@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   withStyles,
@@ -17,12 +17,12 @@ import {
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
 import TableCustom from 'app/main/components/table/TableCustom';
-import { usersTableConfig } from './usersTableConfig';
+import { paymentsTableConfig } from './paymentsTableConfig';
 import clsx from "clsx"
 import Layout from 'app/main/components/layout/Layout';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter, faUserCheck, faUserTimes } from "@fortawesome/free-solid-svg-icons";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import firebaseService from "app/config/firebase/index";
 
 const styles = theme => ({
@@ -36,13 +36,13 @@ const styles = theme => ({
   }
 })
 
-const UsersPage = ({ classes }) => {
+const PaymentsPage = ({ classes }) => {
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
 
-  const getUserData = (query) => {
+  const getPaymentsData = (query) => {
     return new Promise(async resolve => {
-      const data = await firebaseService.getAllUsers()
+      const data = await firebaseService.getAllQuotations()
       resolve({
         data: data,
         page: query.page,
@@ -89,7 +89,7 @@ const UsersPage = ({ classes }) => {
     <Layout>
       <Grid container justify="center">
         <Grid item xs={12} className={"px-24 py-4"}>
-          <Typography className={"text-left mt-8 font-700"} variant={"h4"}>Usuários</Typography>
+          <Typography className={"text-left mt-8 font-900"} variant={"h5"}>Pagamentos</Typography>
         </Grid>
         <Grid item xs={12} className={"mb-24 mx-12"}>
           <Divider />
@@ -114,42 +114,14 @@ const UsersPage = ({ classes }) => {
             )}
           </Grid>
           <TableCustom
-            data={query => getUserData(query)}
-            config={usersTableConfig}
+            data={query => getPaymentsData(query)}
+            config={paymentsTableConfig}
             filterChips={filterChips}
           />
-        </Grid>
-        <Grid item xs={2} className="px-12">
-          <Card className={clsx("bg-green-100 text-right", classes.panel)}>
-            <CardContent>
-              <Grid container justify="space-between" alignItems="center">
-                <Grid item xs={3}>
-                  <FontAwesomeIcon icon={faUserCheck} className="text-28" />
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="h6">Ativos</Typography>
-                  <Typography variant="h6">292</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-          <Card className={clsx("bg-red-100 mt-12 text-right", classes.panel)}>
-            <CardContent>
-              <Grid container justify="space-between" alignItems="center">
-                <Grid item xs={3}>
-                  <FontAwesomeIcon icon={faUserTimes} className="text-28" />
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="h6">Inativos</Typography>
-                  <Typography variant="h6">271</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
         </Grid>
       </Grid>
     </Layout>
   );
 }
 
-export default withStyles(styles)(UsersPage)
+export default withStyles(styles)(PaymentsPage)

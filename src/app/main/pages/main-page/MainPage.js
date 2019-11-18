@@ -16,16 +16,6 @@ const styles = theme => ({
 })
 
 const MainPage = ({ classes, history }) => {
-  const { uid } = useSelector(({ bk }) => bk.user)
-
-  useEffect(() => {
-    if (!uid) {
-      return
-    }
-    history.push('/users')
-  }, [uid, history])
-
-
   return (
     <Grid container justify={"flex-start"} alignContent={"center"} className={clsx(classes.mainBackground, "py-40 px-80")}>
       <Grid item xs={10} sm={5} md={4} lg={3}>
