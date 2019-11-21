@@ -31,19 +31,7 @@ class firebaseService {
     this.auth.onAuthStateChanged(callback);
   };
 
-  getAllUsers = () => {
-    const usersCollection = this.db.collection("users")
-    if (!firebase.apps.length) {
-      return
-    }
-    return new Promise((resolve, reject) => {
-      usersCollection.get()
-        .then((snapshot) => {
-          const users = snapshot.docs.map(doc => doc.data())
-          resolve(users)
-        })
-    })
-  }
+
 
   getAllCouriers = () => {
     const couriersCollection = this.db.collection("couriers")

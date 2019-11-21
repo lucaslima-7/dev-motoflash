@@ -88,7 +88,7 @@ const columns = [
 const options = {
   pageSize: 10,
   pageSizeOptions: [10, 20, 50, 100],
-  maxBodyHeight: "50vh"
+  maxBodyHeight: "55vh"
 };
 
 export const usersTableConfig = {

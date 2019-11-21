@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Grid,
   withStyles,
@@ -24,6 +24,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter, faUserCheck, faUserTimes } from "@fortawesome/free-solid-svg-icons";
 import firebaseService from "app/config/firebase/index";
+import { firestore } from 'firebase';
 
 const styles = theme => ({
   panelOppened: {
@@ -37,16 +38,68 @@ const styles = theme => ({
 })
 
 const UsersPage = ({ classes }) => {
+  const db = firestore()
+  const refCustomTable = useRef()
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
+  const [lastNext, setLastUser] = useState(null)
+  const [lastPrev, setFirstUser] = useState(null)
+  const [countData, setCount] = useState(0)
+  const [type, setType] = useState("next")
+
+  useEffect(() => {
+    const getAllUsersCount = async () => {
+      const usersCollection = db.collection("users")
+      const snap = await usersCollection.get()
+      setCount(snap.docs.map(doc => doc.data()).length)
+    }
+
+    getAllUsersCount()
+    if (refCustomTable.current) {
+      refCustomTable.current.onQueryChange({ page: 0, totalCount: countData })
+    }
+  }, [db, countData])
+
+  const getAllUsers = ({ limit, type }) => {
+    console.log(type)
+    if (type === "prev") {
+      console.log(lastPrev && lastPrev.data())
+      return new Promise(async (resolve, reject) => {
+        const countRef = db.collection("users").orderBy("createdDate").endAt(lastPrev).limit(limit)
+        const snapshot = await countRef.get()
+        setLastUser(snapshot.docs[snapshot.docs.length - 1])
+        setFirstUser(snapshot.docs[0])
+        const users = snapshot.docs
+        resolve({ users })
+      })
+    }
+
+    return new Promise(async (resolve, reject) => {
+      console.log(lastPrev && lastPrev.data())
+      const countRef = db.collection("users").orderBy("createdDate").startAfter(lastNext).limit(limit)
+      const snapshot = await countRef.get()
+      setLastUser(snapshot.docs[snapshot.docs.length - 1])
+      setFirstUser(snapshot.docs[0])
+      const users = snapshot.docs
+      resolve({ users })
+    })
+  }
 
   const getUserData = (query) => {
+    console.log(query)
     return new Promise(async resolve => {
-      const data = await firebaseService.getAllUsers()
+      const data = await getAllUsers({
+        limit: query.pageSize,
+        type
+      })
+      if (countData && (query.page + 1) * query.pageSize > countData) {
+        setType("prev")
+        setFirstUser(data.users[0])
+      }
       resolve({
-        data: data,
+        data: data.users.map(doc => doc.data()),
         page: query.page,
-        totalCount: data.length
+        totalCount: countData
       })
     })
   }
@@ -114,9 +167,12 @@ const UsersPage = ({ classes }) => {
             )}
           </Grid>
           <TableCustom
+            forwardedRef={refCustomTable}
             data={query => getUserData(query)}
             config={usersTableConfig}
             filterChips={filterChips}
+            showDateFilter={false}
+            onChangeRowsPerPage={() => setLastUser(null)}
           />
         </Grid>
         <Grid item xs={2} className="px-12">

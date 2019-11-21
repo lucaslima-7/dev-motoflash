@@ -27,7 +27,7 @@ const styles = () => ({
   }
 })
 
-const TableCustom = ({ config, data, style, actions, classes, filterChips, forwardedRef, showDateFilter = true }) => {
+const TableCustom = ({ config, data, style, actions, classes, filterChips, forwardedRef, showDateFilter = true, onChangeRowsPerPage }) => {
   const dispatch = useDispatch()
   const { endDate } = useSelector(({ bk }) => bk)
   const { startDate } = useSelector(({ bk }) => bk)
@@ -60,6 +60,7 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
       <MaterialTable
         columns={config.columns}
         tableRef={forwardedRef}
+        onChangeRowsPerPage={onChangeRowsPerPage}
         data={data}
         style={{ boxShadow: "none", border: "1px solid lightgrey" }}
         title={""}
