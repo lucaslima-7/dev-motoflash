@@ -37,15 +37,20 @@ const styles = theme => ({
   }
 })
 
+let first = [null]
+let last = [null]
+
 const UsersPage = ({ classes }) => {
   const db = firestore()
   const refCustomTable = useRef()
+  const page = refCustomTable.current && refCustomTable.current.state.data
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
   const [lastNext, setLastUser] = useState(null)
   const [lastPrev, setFirstUser] = useState(null)
   const [countData, setCount] = useState(0)
-  const [type, setType] = useState("next")
+  const [offset, setOffset] = useState(0)
+
 
   useEffect(() => {
     const getAllUsersCount = async () => {
@@ -56,50 +61,96 @@ const UsersPage = ({ classes }) => {
 
     getAllUsersCount()
     if (refCustomTable.current) {
-      refCustomTable.current.onQueryChange({ page: 0, totalCount: countData })
+      console.log("Estou zerando essa budega")
+      refCustomTable.current.onQueryChange({ totalCount: countData })
     }
   }, [db, countData])
 
-  const getAllUsers = ({ limit, type }) => {
-    console.log(type)
+  const getAllUsers = ({ limit, type, page }) => {
+    console.log("last", last)
+    console.log("first", first)
+
     if (type === "prev") {
-      console.log(lastPrev && lastPrev.data())
       return new Promise(async (resolve, reject) => {
-        const countRef = db.collection("users").orderBy("createdDate").endAt(lastPrev).limit(limit)
+        console.log("first", first[page].data().name)
+        console.log("last", last[page].data().name)
+        const countRef = db.collection("users").orderBy("createdDate").startAt(first[page]).limit(limit)
         const snapshot = await countRef.get()
-        setLastUser(snapshot.docs[snapshot.docs.length - 1])
-        setFirstUser(snapshot.docs[0])
+        last[page] = snapshot.docs[snapshot.docs.length - 1]
+        first[page] = snapshot.docs[0]
         const users = snapshot.docs
         resolve({ users })
       })
     }
 
+
     return new Promise(async (resolve, reject) => {
-      console.log(lastPrev && lastPrev.data())
-      const countRef = db.collection("users").orderBy("createdDate").startAfter(lastNext).limit(limit)
+      let temp = null
+      if (last[page - 1]) {
+        temp = last[page - 1]
+      }
+      console.log("temp", page - 1, temp)
+      const countRef = db.collection("users").orderBy("createdDate").startAfter(temp).limit(limit)
       const snapshot = await countRef.get()
-      setLastUser(snapshot.docs[snapshot.docs.length - 1])
-      setFirstUser(snapshot.docs[0])
+      last[page] = snapshot.docs[snapshot.docs.length - 1]
+      first[page] = snapshot.docs[0]
       const users = snapshot.docs
       resolve({ users })
     })
   }
 
-  const getUserData = (query) => {
-    console.log(query)
+  // const getAllUsers = ({ limit, page }) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     console.log("startAt", page * limit)
+  //     const countRef = db.collection("users").orderBy("idNumber").startAt(page * limit).limit(limit)
+  //     const snapshot = await countRef.get()
+  //     const users = snapshot.docs
+  //     resolve({ users })
+  //   })
+  // }
+
+  const userTeste = async query => {
+    const { type, page } = await handleType(query)
+    return getUserData(query, type, page)
+  }
+
+  const getUserData = (query, type, page) => {
     return new Promise(async resolve => {
+      console.log("entrei aqui")
       const data = await getAllUsers({
+        page,
         limit: query.pageSize,
         type
       })
-      if (countData && (query.page + 1) * query.pageSize > countData) {
-        setType("prev")
-        setFirstUser(data.users[0])
-      }
+
+      const users = data.users.map(doc => doc.data())
+      console.log("users", users.map(it => it.name))
+
       resolve({
-        data: data.users.map(doc => doc.data()),
+        data: users,
         page: query.page,
         totalCount: countData
+      })
+    })
+  }
+
+  const handleType = query => {
+    return new Promise(resolve => {
+      const newOffset = query.page * query.pageSize
+      console.log("CurrentPage", query.page)
+      console.log("New", newOffset)
+      console.log("Offset", offset)
+      let type = "next"
+      if (newOffset > offset) {
+        console.log("next handle")
+      } else if (newOffset < offset) {
+        console.log("prev handle")
+        type = "prev"
+      }
+      setOffset(newOffset)
+      resolve({
+        type,
+        page: query.page
       })
     })
   }
@@ -168,11 +219,10 @@ const UsersPage = ({ classes }) => {
           </Grid>
           <TableCustom
             forwardedRef={refCustomTable}
-            data={query => getUserData(query)}
+            data={query => userTeste(query)}
             config={usersTableConfig}
             filterChips={filterChips}
             showDateFilter={false}
-            onChangeRowsPerPage={() => setLastUser(null)}
           />
         </Grid>
         <Grid item xs={2} className="px-12">
