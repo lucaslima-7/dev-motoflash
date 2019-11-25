@@ -14,7 +14,7 @@ const composeEnhancers =
         typeof window === 'object' &&
         window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
         window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-            name: "BackOffice Restaurant"
+            name: "Motoflash"
             // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
         }) : compose;
 

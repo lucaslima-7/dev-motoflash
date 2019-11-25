@@ -56,7 +56,7 @@ const Layout = (props) => {
         <div className={classes.wrapper}>
           <NavbarWrapperLayout />
           <div className={classes.contentWrapper}>
-            <ToolbarLayout />
+            <ToolbarLayout {...props} />
             <div className={classes.content}>
               {props.children}
             </div>

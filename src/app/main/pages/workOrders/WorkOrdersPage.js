@@ -12,7 +12,7 @@ import {
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
 import TableCustom from 'app/main/components/table/TableCustom';
-import { paymentsTableConfig } from './paymentsTableConfig';
+import { workOrdersTableConfig } from './workOrdersTableConfig';
 import Layout from 'app/main/components/layout/Layout';
 import { firestore } from 'firebase';
 
@@ -31,28 +31,28 @@ let first = [null]
 let last = [null]
 let count = 0
 
-const PaymentsPage = ({ classes }) => {
+const WorkOrdersPage = ({ classes, history }) => {
   const db = firestore()
   const refCustomTable = useRef()
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
   const [offset, setOffset] = useState(0)
 
-  const userTeste = async query => {
+  const workOrdersQuery = async query => {
     const { type, page } = await handleType(query)
-    return getpaymentsData(query, type, page)
+    return getWorkOrdersData(query, type, page)
   }
 
-  const getAllpayments = ({ limit, type, page }) => {
+  const getAllWorkOrders = ({ limit, type, page }) => {
     if (type === "prev") {
       return new Promise(async (resolve, reject) => {
-        const countRef = db.collection("payments").orderBy("createdDate").startAt(first[page]).limit(limit)
+        const countRef = db.collection("workOrders").orderBy("createdDate").startAt(first[page]).limit(limit)
         const snapshot = await countRef.get()
         last[page] = snapshot.docs[snapshot.docs.length - 1]
         first[page] = snapshot.docs[0]
-        const payments = snapshot.docs
+        const workOrders = snapshot.docs
         const count = snapshot.count
-        resolve({ payments, count })
+        resolve({ workOrders, count })
       })
     }
 
@@ -62,38 +62,38 @@ const PaymentsPage = ({ classes }) => {
       if (last[page - 1]) {
         temp = last[page - 1]
       }
-      const countRef = db.collection("payments").orderBy("createdDate").startAfter(temp).limit(limit)
+      const countRef = db.collection("workOrders").orderBy("createdDate").startAfter(temp).limit(limit)
       const snapshot = await countRef.get()
       last[page] = snapshot.docs[snapshot.docs.length - 1]
       first[page] = snapshot.docs[0]
-      const payments = snapshot.docs
+      const workOrders = snapshot.docs
       const count = snapshot.count
-      resolve({ payments, count })
+      resolve({ workOrders, count })
     })
   }
 
-  const getpaymentsData = async (query, type, page) => {
+  const getWorkOrdersData = async (query, type, page) => {
     if (!count) {
-      await getAllpaymentsCount()
+      await getAllWorkOrdersCount()
     }
     return new Promise(async resolve => {
-      const data = await getAllpayments({
+      const data = await getAllWorkOrders({
         page,
         limit: query.pageSize,
         type
       })
-      const payments = data.payments.map(doc => doc.data())
+      const workOrders = data.workOrders.map(doc => doc.data())
       resolve({
-        data: payments,
+        data: workOrders,
         page: query.page,
         totalCount: count
       })
     })
   }
 
-  const getAllpaymentsCount = async () => {
-    const paymentsCollection = db.collection("payments")
-    const snap = await paymentsCollection.get()
+  const getAllWorkOrdersCount = async () => {
+    const workOrdersCollection = db.collection("workOrders")
+    const snap = await workOrdersCollection.get()
     count = snap.docs.map(doc => doc.data()).length
   }
 
@@ -150,7 +150,9 @@ const PaymentsPage = ({ classes }) => {
     <Layout>
       <Grid container justify="center">
         <Grid item xs={12} className={"px-24 py-4"}>
-          <Typography className={"text-left mt-8 font-700"} variant={"h4"}>Pagamentos</Typography>
+          <Typography className={"text-left mt-12 font-900"} variant={"h4"}>
+            Corridas
+          </Typography>
         </Grid>
         <Grid item xs={12} className={"mb-24 mx-12"}>
           <Divider />
@@ -176,10 +178,11 @@ const PaymentsPage = ({ classes }) => {
         </Grid> */}
           <TableCustom
             forwardedRef={refCustomTable}
-            data={query => userTeste(query)}
-            config={paymentsTableConfig}
+            data={query => workOrdersQuery(query)}
+            config={workOrdersTableConfig}
             filterChips={filterChips}
             showDateFilter={false}
+            onRowClick={(e, rowData) => history.push('workOrders/' + rowData.id)}
           />
         </Grid>
         {/* <Grid item xs={2} className="px-12">
@@ -215,4 +218,4 @@ const PaymentsPage = ({ classes }) => {
   );
 }
 
-export default withStyles(styles)(PaymentsPage)
+export default withStyles(styles)(WorkOrdersPage)

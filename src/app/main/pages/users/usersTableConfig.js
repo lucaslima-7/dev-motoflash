@@ -1,5 +1,9 @@
+import React from "react"
+import Button from "@material-ui/core/Button";
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 
 const tableStyle = {
   cellStyle: { fontSize: 14, paddingTop: 8, paddingBottom: 8 },
@@ -22,22 +26,6 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
-    }
-  },
-  {
-    title: "Celular",
-    field: "mobilePhone",
-    render: rowData => (
-      rowData.mobilePhone ? rowData.mobilePhone : " - "
-    ),
-    cellStyle: {
-      ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   },
   {
@@ -48,9 +36,6 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   },
   {
@@ -63,32 +48,15 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
-    }
-  },
-  {
-    title: "Localização",
-    field: "location",
-    render: rowData => (
-      rowData.location ?
-        `${rowData.location._lat}, ${rowData.location._long}`
-        : " - "
-    ),
-    cellStyle: {
-      ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   }
 ];
 
 const options = {
-  pageSize: 10,
-  pageSizeOptions: [10, 20, 50, 100],
-  maxBodyHeight: "55vh"
+  maxBodyHeight: "60vh",
+  headerStyle: {
+    ...tableStyle.headerStyle
+  }
 };
 
 export const usersTableConfig = {

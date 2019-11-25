@@ -520,7 +520,7 @@ module.exports = {
       },
       fontFamily: {
         sans: [
-          'Quicksand',
+          '"Noto Sans"',
           'Muli',
           'Roboto',
           '-apple-system',

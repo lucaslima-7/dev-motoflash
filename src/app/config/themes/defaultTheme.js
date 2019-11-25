@@ -1,7 +1,7 @@
 const defaultTheme = {
   typography: {
     fontFamily: [
-      'Quicksand',
+      '"Noto Sans"',
       'Muli',
       '"Helvetica"',
       'Arial',
@@ -10,6 +10,7 @@ const defaultTheme = {
     fontWeightLight: 300,
     fontWeightRegular: 400,
     fontWeightMedium: 600,
+    fontWeightBold: 800,
     useNextVariants: true,
     suppressDeprecationWarnings: true,
     htmlFontSize: 10,
@@ -23,15 +24,15 @@ const defaultTheme = {
   palette: {
     type: "light",
     primary: {
-      light: "#80AAFF",
-      main: "#2E6FF2",
-      dark: "#3B6DD4",
+      light: "#E3F2FD",
+      main: "#82B1FF",
+      dark: "#2979FF",
       contrastText: "#212121"
     },
     secondary: {
-      light: "#c1c1c1",
-      main: "#6EFFF3",
-      dark: "#181818",
+      light: "#B3E5FC",
+      main: "#80D8FF",
+      dark: "#0091EA",
       contrastText: "#212121"
     }
   }

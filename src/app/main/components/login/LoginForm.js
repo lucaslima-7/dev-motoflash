@@ -86,6 +86,7 @@ const LoginForm = ({ history }) => {
                   type={showPassword ? 'text' : 'password'}
                   value={loginData.password}
                   onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                  onKeyDown={(e) => e.keyCode === 13 ? submitLoginWithFireBase({ email: loginData.email, password: loginData.password }) : null}
                   InputProps={{
                     endAdornment: (
                       <IconButton
@@ -108,7 +109,7 @@ const LoginForm = ({ history }) => {
                   color="primary"
                   component="button"
                   variant="body1"
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(0)}
                 >
                   Esqueceu a Senha?
                 </Link>
@@ -126,7 +127,7 @@ const LoginForm = ({ history }) => {
               </Grid>
             </>
           )}
-          {step === 1 && (
+          {/* {step === 1 && (
             <>
               <Grid item xs={12} className={"my-8"}>
                 <TextField
@@ -200,7 +201,7 @@ const LoginForm = ({ history }) => {
                 </Button>
               </Grid>
             </>
-          )}
+          )} */}
           {step === 2 && (
             <>
               <Grid item xs={12}>
@@ -235,7 +236,7 @@ const LoginForm = ({ history }) => {
           )}
         </Grid>
       </Paper >
-      {step !== 2 && (
+      {/* {step !== 2 && (
         <Paper className={"rounded-8 shadow-lg p-16 mt-12"}>
           <Grid container justify="space-between" alignItems="center">
             {step === 0 && (
@@ -280,7 +281,7 @@ const LoginForm = ({ history }) => {
             )}
           </Grid>
         </Paper>
-      )}
+      )} */}
     </>
   )
 }

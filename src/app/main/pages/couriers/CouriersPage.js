@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Grid,
   withStyles,
@@ -7,23 +7,14 @@ import {
   Checkbox,
   Typography,
   Divider,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  Card,
   Button,
-  CardContent
 } from "@material-ui/core";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
 import TableCustom from 'app/main/components/table/TableCustom';
 import { couriersTableConfig } from './couriersTableConfig';
-import clsx from "clsx"
 import Layout from 'app/main/components/layout/Layout';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import firebaseService from "app/config/firebase/index";
+import { firestore } from 'firebase';
 
 const styles = theme => ({
   panelOppened: {
@@ -36,17 +27,87 @@ const styles = theme => ({
   }
 })
 
-const CouriersPage = ({ classes }) => {
+let first = [null]
+let last = [null]
+let count = 0
+
+const CouriersPage = ({ classes, history }) => {
+  const db = firestore()
+  const refCustomTable = useRef()
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
+  const [offset, setOffset] = useState(0)
 
-  const getCourierData = (query) => {
+  const couriersQuery = async query => {
+    const { type, page } = await handleType(query)
+    return getCouriersData(query, type, page)
+  }
+
+  const getAllCouriers = ({ limit, type, page }) => {
+    if (type === "prev") {
+      return new Promise(async (resolve, reject) => {
+        const countRef = db.collection("couriers").orderBy("createdDate").startAt(first[page]).limit(limit)
+        const snapshot = await countRef.get()
+        last[page] = snapshot.docs[snapshot.docs.length - 1]
+        first[page] = snapshot.docs[0]
+        const couriers = snapshot.docs
+        const count = snapshot.count
+        resolve({ couriers, count })
+      })
+    }
+
+
+    return new Promise(async (resolve, reject) => {
+      let temp = null
+      if (last[page - 1]) {
+        temp = last[page - 1]
+      }
+      const countRef = db.collection("couriers").orderBy("createdDate").startAfter(temp).limit(limit)
+      const snapshot = await countRef.get()
+      last[page] = snapshot.docs[snapshot.docs.length - 1]
+      first[page] = snapshot.docs[0]
+      const couriers = snapshot.docs
+      const count = snapshot.count
+      resolve({ couriers, count })
+    })
+  }
+
+  const getCouriersData = async (query, type, page) => {
+    if (!count) {
+      await getAllCouriersCount()
+    }
     return new Promise(async resolve => {
-      const data = await firebaseService.getAllCouriers()
+      const data = await getAllCouriers({
+        page,
+        limit: query.pageSize,
+        type
+      })
+      const couriers = data.couriers.map(doc => doc.data())
       resolve({
-        data: data,
+        data: couriers,
         page: query.page,
-        totalCount: data.length
+        totalCount: count
+      })
+    })
+  }
+
+  const getAllCouriersCount = async () => {
+    const couriersCollection = db.collection("couriers")
+    const snap = await couriersCollection.get()
+    count = snap.docs.map(doc => doc.data()).length
+  }
+
+  const handleType = query => {
+    return new Promise(resolve => {
+      const newOffset = query.page * query.pageSize
+      let type = "next"
+      if (newOffset < offset) {
+        type = "prev"
+      }
+      setOffset(newOffset)
+      resolve({
+        type,
+        page: query.page
       })
     })
   }
@@ -89,38 +150,69 @@ const CouriersPage = ({ classes }) => {
     <Layout>
       <Grid container justify="center">
         <Grid item xs={12} className={"px-24 py-4"}>
-          <Typography className={"text-left mt-8 font-900"} variant={"h5"}>Motoristas</Typography>
+          <Typography className={"text-left mt-8 font-700"} variant={"h4"}>Motoboys</Typography>
         </Grid>
         <Grid item xs={12} className={"mb-24 mx-12"}>
           <Divider />
         </Grid>
-        <Grid item xs={10} className="pl-12">
-          <Grid item xs={12} className="mb-12">
-            {filterChips && (
-              <ExpansionPanel className={classes.panel}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography className={"italic"}><FontAwesomeIcon icon={faFilter} /> Demais Filtros</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.panelOppened}>
-                  <Grid item xs={12} className={"float-left"}>
-                    {filterChips}
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            )}
-          </Grid>
+        <Grid item xs={12} className="px-12">
+          {/* <Grid item xs={12} className="mb-12">
+          {filterChips && (
+            <ExpansionPanel className={classes.panel}>
+              <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography className={"italic"}><FontAwesomeIcon icon={faFilter} /> Demais Filtros</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails className={classes.panelOppened}>
+                <Grid item xs={12} className={"float-left"}>
+                  {filterChips}
+                </Grid>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          )}
+        </Grid> */}
           <TableCustom
-            data={query => getCourierData(query)}
+            forwardedRef={refCustomTable}
+            data={query => couriersQuery(query)}
             config={couriersTableConfig}
             filterChips={filterChips}
+            showDateFilter={false}
+            onRowClick={(e, rowData) => history.push('couriers/' + rowData.id)}
           />
         </Grid>
+        {/* <Grid item xs={2} className="px-12">
+        <Card className={clsx("bg-green-100 text-right", classes.panel)}>
+          <CardContent>
+            <Grid container justify="space-between" alignItems="center">
+              <Grid item xs={3}>
+                <FontAwesomeIcon icon={faUserCheck} className="text-28" />
+              </Grid>
+              <Grid item xs={9}>
+                <Typography variant="h6">Ativos</Typography>
+                <Typography variant="h6">292</Typography>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+        <Card className={clsx("bg-red-100 mt-12 text-right", classes.panel)}>
+          <CardContent>
+            <Grid container justify="space-between" alignItems="center">
+              <Grid item xs={3}>
+                <FontAwesomeIcon icon={faUserTimes} className="text-28" />
+              </Grid>
+              <Grid item xs={9}>
+                <Typography variant="h6">Inativos</Typography>
+                <Typography variant="h6">271</Typography>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Grid> */}
       </Grid>
-    </Layout>
+    </Layout >
   );
 }
 

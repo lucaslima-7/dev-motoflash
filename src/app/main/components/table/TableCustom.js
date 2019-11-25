@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Actions from "app/store/actions";
-import MaterialTable from "material-table";
+import MaterialTable, { MTablePagination } from "material-table";
 import {
   Grid,
   withStyles,
@@ -12,7 +12,8 @@ import {
   DialogContent,
   DialogContentText,
   Typography,
-  IconButton
+  IconButton,
+  TablePagination
 } from "@material-ui/core"
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import defaultTheme from "app/config/themes/defaultTheme";
@@ -27,7 +28,18 @@ const styles = () => ({
   }
 })
 
-const TableCustom = ({ config, data, style, actions, classes, filterChips, forwardedRef, showDateFilter = true, onChangeRowsPerPage }) => {
+const TableCustom = ({
+  config,
+  data,
+  style,
+  actions,
+  classes,
+  filterChips,
+  forwardedRef,
+  showDateFilter = true,
+  onChangeRowsPerPage,
+  onRowClick
+}) => {
   const dispatch = useDispatch()
   const { endDate } = useSelector(({ bk }) => bk)
   const { startDate } = useSelector(({ bk }) => bk)
@@ -35,10 +47,14 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
   const [editMode, setEditMode] = useState(false)
   let options = {
     ...config.options,
+    pageSize: 15,
+    pageSizeOptions: [15, 50, 100],
     sorting: false,
     debounceInterval: 1000,
     loadingType: 'linear',
     paginationType: 'normal',
+    showFirstLastPageButtons: false,
+    searchFieldAlignment: "left",
     draggable: false
   };
 
@@ -61,6 +77,7 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
         columns={config.columns}
         tableRef={forwardedRef}
         onChangeRowsPerPage={onChangeRowsPerPage}
+        onRowClick={onRowClick}
         data={data}
         style={{ boxShadow: "none", border: "1px solid lightgrey" }}
         title={""}
@@ -90,8 +107,8 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
             <Grid container>
               <Grid item xs={12}>
                 <Grid container justify={"space-between"} alignItems={"center"}>
-                  <Grid item xs={7} className={"px-8"}>
-                    {showDateFilter && (
+                  {showDateFilter && (
+                    <Grid item xs={7} className={"px-8"}>
                       <div className={"flex flex-row items-center"}>
                         <IconButton fontSize="small" className={"pl-12"} onClick={() => setEditMode(true)}>
                           <Event />
@@ -101,13 +118,19 @@ const TableCustom = ({ config, data, style, actions, classes, filterChips, forwa
                           Até: {unixtimestampToDate(endDate).substring(0, 10)}
                         </Typography>
                       </div>
-                    )}
-                  </Grid>
-                  <Grid item xs={5} className={"px-8"}>
+                    </Grid>
+                  )}
+                  <Grid item xs={showDateFilter ? 5 : 12} className={"px-8"}>
                     <MTableToolbar {...props} searchFieldStyle={{ minWidth: 200 }} />
                   </Grid>
                 </Grid>
               </Grid>
+            </Grid>
+          ),
+          Pagination: props => (
+            <Grid container justify="flex-end">
+              {/* To se te selection again, remove the selectProps */}
+              <TablePagination {...props} SelectProps={{ style: { display: "none" } }} />
             </Grid>
           )
         }}

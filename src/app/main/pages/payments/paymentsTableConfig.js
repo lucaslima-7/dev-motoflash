@@ -1,3 +1,6 @@
+import React from "react"
+import Link from "@material-ui/core/Link"
+import history from "@history";
 import { unixtimestampToDate } from "app/utils/DateUtil";
 import NumberUtil from "app/utils/NumberUtil";
 import defaultTheme from 'app/config/themes/defaultTheme';
@@ -16,42 +19,63 @@ const tableStyle = {
 
 const columns = [
   {
-    title: "Distância",
-    field: "distance",
-    render: rowData => (
-      rowData.distance ? rowData.distance : " - "
-    ),
-    cellStyle: {
-      ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
-    }
-  },
-  {
-    title: "Duração",
-    field: "duration",
-    render: rowData => (
-      rowData.duration ? rowData.duration : " - "
-    ),
-    cellStyle: {
-      ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
-    }
-  },
-  {
     title: "Valor",
-    field: "price",
     render: rowData => (
-      rowData.price ? NumberUtil.getDoubleAsCurrency(rowData.price) : " - "
+      rowData.amount ? NumberUtil.getDoubleAsCurrency(rowData.amount) : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
+    }
+  },
+  {
+    title: "Pago - Motoboy",
+    render: rowData => (
+      rowData.courierAmount ? NumberUtil.getDoubleAsCurrency(rowData.courierAmount) : " - "
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
+    }
+  },
+  {
+    title: "ID Motoboy",
+    render: rowData => (
+      <>
+        {rowData.courierId ? (
+          <Link
+            variant="inherit"
+            onClick={() => history.push('/couriers/' + rowData.courierId)}
+            className={"cursor-pointer font-800"}
+            color="primary">
+            {rowData.courierId}
+          </Link>
+        ) : (
+            " - "
+          )}
+      </>
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
+    }
+  },
+  {
+    title: "ID Viagem",
+    render: rowData => (
+      <>
+        {rowData.workOrderId ? (
+          <Link
+            variant="inherit"
+            onClick={() => history.push('/workOrder/' + rowData.workOrderId)}
+            className={"cursor-pointer font-800"}
+            color="primary">
+            {rowData.workOrderId}
+          </Link>
+        ) : (
+            " - "
+          )}
+      </>
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
     }
   },
   {
@@ -64,17 +88,15 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
-  }
+  },
 ];
 
 const options = {
-  pageSize: 10,
-  pageSizeOptions: [10, 20, 50, 100],
-  maxBodyHeight: "50vh"
+  maxBodyHeight: "60vh",
+  headerStyle: {
+    ...tableStyle.headerStyle
+  }
 };
 
 export const paymentsTableConfig = {

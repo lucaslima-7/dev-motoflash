@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Grid,
   withStyles,
@@ -7,24 +7,18 @@ import {
   Checkbox,
   Typography,
   Divider,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  Card,
-  Button,
-  CardContent
+  Button
 } from "@material-ui/core";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
 import TableCustom from 'app/main/components/table/TableCustom';
 import { usersTableConfig } from './usersTableConfig';
-import clsx from "clsx"
 import Layout from 'app/main/components/layout/Layout';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter, faUserCheck, faUserTimes } from "@fortawesome/free-solid-svg-icons";
-import firebaseService from "app/config/firebase/index";
 import { firestore } from 'firebase';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import NewUserModal from "./NewUserModal"
+
 
 const styles = theme => ({
   panelOppened: {
@@ -39,47 +33,31 @@ const styles = theme => ({
 
 let first = [null]
 let last = [null]
+let count = 0
 
-const UsersPage = ({ classes }) => {
+const UsersPage = ({ classes, history }) => {
   const db = firestore()
   const refCustomTable = useRef()
-  const page = refCustomTable.current && refCustomTable.current.state.data
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
-  const [lastNext, setLastUser] = useState(null)
-  const [lastPrev, setFirstUser] = useState(null)
-  const [countData, setCount] = useState(0)
   const [offset, setOffset] = useState(0)
+  const [modalOpen, setModalOpen] = useState(false)
 
-
-  useEffect(() => {
-    const getAllUsersCount = async () => {
-      const usersCollection = db.collection("users")
-      const snap = await usersCollection.get()
-      setCount(snap.docs.map(doc => doc.data()).length)
-    }
-
-    getAllUsersCount()
-    if (refCustomTable.current) {
-      console.log("Estou zerando essa budega")
-      refCustomTable.current.onQueryChange({ totalCount: countData })
-    }
-  }, [db, countData])
+  const userQuery = async query => {
+    const { type, page } = await handleType(query)
+    return getUserData(query, type, page)
+  }
 
   const getAllUsers = ({ limit, type, page }) => {
-    console.log("last", last)
-    console.log("first", first)
-
     if (type === "prev") {
       return new Promise(async (resolve, reject) => {
-        console.log("first", first[page].data().name)
-        console.log("last", last[page].data().name)
         const countRef = db.collection("users").orderBy("createdDate").startAt(first[page]).limit(limit)
         const snapshot = await countRef.get()
         last[page] = snapshot.docs[snapshot.docs.length - 1]
         first[page] = snapshot.docs[0]
         const users = snapshot.docs
-        resolve({ users })
+        const count = snapshot.count
+        resolve({ users, count })
       })
     }
 
@@ -89,62 +67,47 @@ const UsersPage = ({ classes }) => {
       if (last[page - 1]) {
         temp = last[page - 1]
       }
-      console.log("temp", page - 1, temp)
       const countRef = db.collection("users").orderBy("createdDate").startAfter(temp).limit(limit)
       const snapshot = await countRef.get()
       last[page] = snapshot.docs[snapshot.docs.length - 1]
       first[page] = snapshot.docs[0]
       const users = snapshot.docs
-      resolve({ users })
+      const count = snapshot.count
+      resolve({ users, count })
     })
   }
 
-  // const getAllUsers = ({ limit, page }) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     console.log("startAt", page * limit)
-  //     const countRef = db.collection("users").orderBy("idNumber").startAt(page * limit).limit(limit)
-  //     const snapshot = await countRef.get()
-  //     const users = snapshot.docs
-  //     resolve({ users })
-  //   })
-  // }
-
-  const userTeste = async query => {
-    const { type, page } = await handleType(query)
-    return getUserData(query, type, page)
-  }
-
-  const getUserData = (query, type, page) => {
+  const getUserData = async (query, type, page) => {
+    if (!count) {
+      await getAllUsersCount()
+    }
     return new Promise(async resolve => {
-      console.log("entrei aqui")
       const data = await getAllUsers({
         page,
         limit: query.pageSize,
         type
       })
-
       const users = data.users.map(doc => doc.data())
-      console.log("users", users.map(it => it.name))
-
       resolve({
         data: users,
         page: query.page,
-        totalCount: countData
+        totalCount: count
       })
     })
+  }
+
+  const getAllUsersCount = async () => {
+    console.log("Botando Count")
+    const usersCollection = db.collection("users")
+    const snap = await usersCollection.get()
+    count = snap.docs.map(doc => doc.data()).length
   }
 
   const handleType = query => {
     return new Promise(resolve => {
       const newOffset = query.page * query.pageSize
-      console.log("CurrentPage", query.page)
-      console.log("New", newOffset)
-      console.log("Offset", offset)
       let type = "next"
-      if (newOffset > offset) {
-        console.log("next handle")
-      } else if (newOffset < offset) {
-        console.log("prev handle")
+      if (newOffset < offset) {
         type = "prev"
       }
       setOffset(newOffset)
@@ -198,8 +161,8 @@ const UsersPage = ({ classes }) => {
         <Grid item xs={12} className={"mb-24 mx-12"}>
           <Divider />
         </Grid>
-        <Grid item xs={10} className="pl-12">
-          <Grid item xs={12} className="mb-12">
+        <Grid item xs={12} className="px-12">
+          {/* <Grid item xs={12} className="mb-12">
             {filterChips && (
               <ExpansionPanel className={classes.panel}>
                 <ExpansionPanelSummary
@@ -216,16 +179,25 @@ const UsersPage = ({ classes }) => {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             )}
-          </Grid>
+          </Grid> */}
           <TableCustom
+            actions={[
+              {
+                icon: () => <FontAwesomeIcon icon={faPlusCircle} />,
+                tooltip: "Adicionar",
+                isFreeAction: true,
+                onClick: () => setModalOpen(true)
+              },
+            ]}
             forwardedRef={refCustomTable}
-            data={query => userTeste(query)}
+            data={query => userQuery(query)}
             config={usersTableConfig}
             filterChips={filterChips}
             showDateFilter={false}
+            onRowClick={(e, rowData) => history.push('users/' + rowData.id)}
           />
         </Grid>
-        <Grid item xs={2} className="px-12">
+        {/* <Grid item xs={2} className="px-12">
           <Card className={clsx("bg-green-100 text-right", classes.panel)}>
             <CardContent>
               <Grid container justify="space-between" alignItems="center">
@@ -252,9 +224,10 @@ const UsersPage = ({ classes }) => {
               </Grid>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid> */}
+        <NewUserModal open={modalOpen} setOpen={setModalOpen} />
       </Grid>
-    </Layout>
+    </Layout >
   );
 }
 

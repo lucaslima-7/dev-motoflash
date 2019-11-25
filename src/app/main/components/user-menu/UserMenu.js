@@ -29,15 +29,15 @@ const UserMenu = () => {
           )
           :
           (
-            <Avatar className="">
-              {user.displayName}
+            <Avatar className="" alt="user photo" src={user.profilePic}>
+              {user.displayName.split(" ")[0]}
             </Avatar>
           )
         }
 
         <div className="hidden md:flex flex-col ml-12 items-start">
           <Typography component="span" className="normal-case font-600 flex">
-            {user.displayName}
+            {user.displayName.split(" ")[0]}
           </Typography>
           <Typography className="text-11 capitalize" color="textSecondary">
             {user.role.toString()}

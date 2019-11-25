@@ -5,8 +5,16 @@ export function localize(key, lang) {
     switch (lang) {
         default:
             switch (key.toUpperCase()) {
-                case 'PALAVRA':
-                    return 'Palavra'
+                case 'PENDING':
+                    return "Pendente"
+                case 'CANCELLED':
+                    return "Cancelada"
+                case 'ASSIGNED':
+                    return "Atribuída"
+                case 'ACTIVE':
+                    return "Ativo"
+                case 'INACTIVE':
+                    return "Inativo"
                 default:
                     return key
             }

@@ -1,5 +1,13 @@
+import React from "react"
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import Chip from "@material-ui/core/Chip";
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
+import clsx from "clsx";
+import ChipStatus from "app/main/components/chipStatus/ChipStatus";
 
 const tableStyle = {
   cellStyle: { fontSize: 14, paddingTop: 8, paddingBottom: 8 },
@@ -22,9 +30,6 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   },
   {
@@ -35,24 +40,39 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
+    }
+  },
+  {
+    title: "Status",
+    field: "active",
+    render: rowData => (
+      rowData.active ? <ChipStatus status={rowData.active ? 'ATIVO' : 'INATIVO'} /> : " - "
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
     }
   },
   {
     title: "Localização",
-    field: "location",
     render: rowData => (
-      rowData.location ?
-        `${rowData.location._lat}, ${rowData.location._long}`
+      rowData.location.geopoint ?
+        <a
+          href={`https://www.google.com/maps?q=${rowData.location.geopoint._lat},${rowData.location.geopoint._long}`}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <Button
+            variant={"contained"}
+            color={"primary"}
+            size={"small"}
+            className={"min-w-4 p-4 h-28 w-28 block m-auto"}>
+            <FontAwesomeIcon icon={faMapMarkedAlt} />
+          </Button>
+        </a>
         : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   },
   {
@@ -65,17 +85,15 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   },
 ];
 
 const options = {
-  pageSize: 10,
-  pageSizeOptions: [10, 20, 50, 100],
-  maxBodyHeight: "50vh"
+  maxBodyHeight: "60vh",
+  headerStyle: {
+    ...tableStyle.headerStyle
+  }
 };
 
 export const couriersTableConfig = {

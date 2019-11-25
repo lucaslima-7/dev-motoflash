@@ -2,7 +2,7 @@ import React from 'react';
 import pageAccess from "../../auth/AuthorizationRoles";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaypal } from "@fortawesome/free-brands-svg-icons";
-import { faUsers, faMotorcycle, faTaxi, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faMotorcycle, faMapMarkerAlt, faCog } from '@fortawesome/free-solid-svg-icons';
 
 const navMenus = [
   {
@@ -15,27 +15,19 @@ const navMenus = [
   },
   {
     'id': 'couriers',
-    'title': 'Motoristas',
+    'title': 'Motoboys',
     'type': 'item',
     'url': '/couriers',
     auth: pageAccess.couriers,
     'icon': () => <FontAwesomeIcon icon={faMotorcycle} />
   },
   {
-    'id': 'couriers_lastlocation',
-    'title': 'Localização',
+    'id': 'workOrders',
+    'title': 'Corridas',
     'type': 'item',
-    'url': '/location',
-    auth: pageAccess.location,
-    'icon': () => <FontAwesomeIcon icon={faMapMarkedAlt} />
-  },
-  {
-    'id': 'trips',
-    'title': 'Viagens',
-    'type': 'item',
-    'url': '/trips',
-    auth: pageAccess.trips,
-    'icon': () => <FontAwesomeIcon icon={faTaxi} />
+    'url': '/workOrders',
+    auth: pageAccess.workOrders,
+    'icon': () => <FontAwesomeIcon icon={faMapMarkerAlt} />
   },
   {
     'id': 'payments',
@@ -45,6 +37,14 @@ const navMenus = [
     auth: pageAccess.payments,
     'icon': () => <FontAwesomeIcon icon={faPaypal} />
   },
+  {
+    'id': 'configuration',
+    'title': 'Configurações',
+    'type': 'item',
+    'url': '/configurations',
+    auth: pageAccess.config,
+    'icon': () => <FontAwesomeIcon icon={faCog} />
+  }
 ]
 
 export default navMenus

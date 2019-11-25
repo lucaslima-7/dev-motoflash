@@ -1,5 +1,8 @@
+import React from 'react';
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
+import NumberUtil from "app/utils/NumberUtil";
+import ChipStatus from "app/main/components/chipStatus/ChipStatus";
 
 const tableStyle = {
   cellStyle: { fontSize: 14, paddingTop: 8, paddingBottom: 8 },
@@ -15,10 +18,12 @@ const tableStyle = {
 
 const columns = [
   {
-    title: "Nome",
-    field: "name",
+    title: "Coleta",
     render: rowData => (
-      rowData.name ? rowData.name : " - "
+      rowData.points ?
+        (
+          rowData.points[0].address.address1
+        ) : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
@@ -28,10 +33,12 @@ const columns = [
     }
   },
   {
-    title: "Celular",
-    field: "mobilePhone",
+    title: "Entrega",
     render: rowData => (
-      rowData.mobilePhone ? rowData.mobilePhone : " - "
+      rowData.points ?
+        (
+          rowData.points[1].address.address1
+        ) : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
@@ -41,42 +48,48 @@ const columns = [
     }
   },
   {
-    title: "E-mail",
-    field: "email",
+    title: "Valor",
     render: rowData => (
-      rowData.email ? rowData.email : " - "
+      rowData.quotation ?
+        NumberUtil.getDoubleAsCurrency(rowData.quotation.price) : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
     },
     headerStyle: {
       ...tableStyle.headerStyle
+    }
+  },
+  {
+    title: "Status",
+    render: rowData => (
+      rowData.status ? <ChipStatus status={rowData.status} /> : " - "
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
     }
   },
   {
     title: "Criado Em",
-    field: "createdDate",
     render: rowData => (
       rowData.createdDate ?
-        unixtimestampToDate(rowData.createdDate * 1000).substring(0, 10)
+        unixtimestampToDate(rowData.createdDate.seconds * 1000)
         : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
-    },
-    headerStyle: {
-      ...tableStyle.headerStyle
     }
   }
 ];
 
 const options = {
-  pageSize: 10,
-  pageSizeOptions: [10, 20, 50, 100],
-  maxBodyHeight: "50vh"
+  maxBodyHeight: "60vh",
+  headerStyle: {
+    ...tableStyle.headerStyle
+  }
 };
 
-export const tripsTableConfig = {
+export const workOrdersTableConfig = {
   title: "",
   columns,
   options
