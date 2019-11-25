@@ -18,7 +18,7 @@ const styles = theme => ({
 class NumberFormatCustom extends React.Component {
 
     render() {
-        const { classes, onChange, tabIndex,InputProps,...other } = this.props;
+        const { classes, onChange, tabIndex, InputProps, ...other } = this.props;
 
         return (
             <div className={classes.container}>
@@ -32,24 +32,24 @@ class NumberFormatCustom extends React.Component {
                     variant="outlined"
                     // type="number"   
                     InputProps={{
-                        inputComponent: (inputProps) => 
-                                     <NumberFormatInput 
-                                        {...inputProps}
-                                        {...InputProps}
+                        inputComponent: (InputProps) =>
+                            <NumberFormatInput
+                                {...InputProps}
+                                {...InputProps}
 
-                                        thousandSeparator={this.props.thousandSeparator} 
-                                        decimalSeparator={this.props.decimalSeparator} 
-                                        fixedDecimalScale={this.props.fixedDecimalScale} 
-                                        type="tel"
-                                        prefix={this.props.prefix}
-                                        format={this.props.format}
-                                        mask={this.props.mask}
-                                        allowNegative={this.props.allowNegative}
-                                        decimalScale={this.props.decimalScale}
-                                        tabIndex={tabIndex}
-                                      />
+                                thousandSeparator={this.props.thousandSeparator}
+                                decimalSeparator={this.props.decimalSeparator}
+                                fixedDecimalScale={this.props.fixedDecimalScale}
+                                type="tel"
+                                prefix={this.props.prefix}
+                                format={this.props.format}
+                                mask={this.props.mask}
+                                allowNegative={this.props.allowNegative}
+                                decimalScale={this.props.decimalScale}
+                                tabIndex={tabIndex}
+                            />
                     }}
-                    
+
                 />
             </div>
         );

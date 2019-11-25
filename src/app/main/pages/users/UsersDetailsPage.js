@@ -74,7 +74,7 @@ const UserDetailsPage = ({ match: { params } }) => {
                   onChange={e => setUser({ ...user, fullName: e.target.value })}
                   margin="dense"
                   variant="outlined"
-                  inputProps={{ maxLength: 200 }}
+                  InputProps={{ maxLength: 200 }}
                 />
               </Grid>
               <Grid item xs={12} className={"mt-8"}>
@@ -88,7 +88,7 @@ const UserDetailsPage = ({ match: { params } }) => {
                   onChange={e => setUser({ ...user, email: e.target.value })}
                   margin="dense"
                   variant="outlined"
-                  inputProps={{ maxLength: 200 }}
+                  InputProps={{ maxLength: 200 }}
                 />
               </Grid>
               <Grid item xs={12} className={"mt-8"}>

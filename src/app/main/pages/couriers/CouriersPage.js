@@ -15,6 +15,9 @@ import TableCustom from 'app/main/components/table/TableCustom';
 import { couriersTableConfig } from './couriersTableConfig';
 import Layout from 'app/main/components/layout/Layout';
 import { firestore } from 'firebase';
+import clsx from 'clsx';
+import defaultTheme from 'app/config/themes/defaultTheme';
+import NewCourierModal from './NewCourierModal';
 
 const styles = theme => ({
   panelOppened: {
@@ -24,6 +27,9 @@ const styles = theme => ({
   panel: {
     boxShadow: "none",
     border: "1px solid lightgrey",
+  },
+  bgDetails: {
+    background: defaultTheme.palette.primary.light
   }
 })
 
@@ -37,6 +43,7 @@ const CouriersPage = ({ classes, history }) => {
   const [selectedStatus, setSelectedStatus] = useState("")
   const newStatusList = ["AVAILABLE", "CANCELED"]
   const [offset, setOffset] = useState(0)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const couriersQuery = async query => {
     const { type, page } = await handleType(query)
@@ -92,9 +99,9 @@ const CouriersPage = ({ classes, history }) => {
   }
 
   const getAllCouriersCount = async () => {
-    const couriersCollection = db.collection("couriers")
+    const couriersCollection = db.collection("metadatas").doc("couriers")
     const snap = await couriersCollection.get()
-    count = snap.docs.map(doc => doc.data()).length
+    count = snap.data().count
   }
 
   const handleType = query => {
@@ -155,7 +162,7 @@ const CouriersPage = ({ classes, history }) => {
         <Grid item xs={12} className={"mb-24 mx-12"}>
           <Divider />
         </Grid>
-        <Grid item xs={12} className="px-12">
+        <Grid item xs={9} className="px-12">
           {/* <Grid item xs={12} className="mb-12">
           {filterChips && (
             <ExpansionPanel className={classes.panel}>
@@ -175,42 +182,36 @@ const CouriersPage = ({ classes, history }) => {
           )}
         </Grid> */}
           <TableCustom
+            actions={[
+              {
+                icon: () => <FontAwesomeIcon icon={faPlusCircle} />,
+                tooltip: "Adicionar",
+                isFreeAction: true,
+                onClick: () => setModalOpen(true)
+              },
+            ]}
             forwardedRef={refCustomTable}
             data={query => couriersQuery(query)}
             config={couriersTableConfig}
             filterChips={filterChips}
             showDateFilter={false}
-            onRowClick={(e, rowData) => history.push('couriers/' + rowData.id)}
           />
         </Grid>
-        {/* <Grid item xs={2} className="px-12">
-        <Card className={clsx("bg-green-100 text-right", classes.panel)}>
-          <CardContent>
-            <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={3}>
-                <FontAwesomeIcon icon={faUserCheck} className="text-28" />
+        <Grid item xs={3} className={clsx(classes.bgDetails, "px-12")}>
+          <Card className={classes.panel}>
+            <CardContent>
+              <Grid container justify="flex-start" alignItems="center">
+                <Grid item xs={12} className={"my-0"}>
+                  <Typography variant="h6">Algum texto curioso</Typography>
+                </Grid>
+                <Grid item xs={12} className={"my-0"}>
+                  <Typography variant="body1">texto de teste</Typography>
+                </Grid>
               </Grid>
-              <Grid item xs={9}>
-                <Typography variant="h6">Ativos</Typography>
-                <Typography variant="h6">292</Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-        <Card className={clsx("bg-red-100 mt-12 text-right", classes.panel)}>
-          <CardContent>
-            <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={3}>
-                <FontAwesomeIcon icon={faUserTimes} className="text-28" />
-              </Grid>
-              <Grid item xs={9}>
-                <Typography variant="h6">Inativos</Typography>
-                <Typography variant="h6">271</Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      </Grid> */}
+            </CardContent>
+          </Card>
+        </Grid>
+        <NewCourierModal open={modalOpen} setOpen={setModalOpen} />
       </Grid>
     </Layout >
   );

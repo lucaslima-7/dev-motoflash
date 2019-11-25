@@ -31,67 +31,6 @@ class firebaseService {
     this.auth.onAuthStateChanged(callback);
   };
 
-
-
-  getAllCouriers = () => {
-    const couriersCollection = this.db.collection("couriers")
-    if (!firebase.apps.length) {
-      return
-    }
-    return new Promise((resolve, reject) => {
-      couriersCollection.get()
-        .then((snapshot) => {
-          const couriers = snapshot.docs.map(doc => doc.data())
-          resolve(couriers)
-        })
-    })
-  }
-
-  getAllCompanies = () => {
-    const companiesCollection = this.db.collection("companies")
-    if (!firebase.app.length) {
-      return
-    }
-    return new Promise((resolve, reject) => {
-      companiesCollection.get()
-        .then((snapshot) => {
-          const companies = snapshot.docs.map(doc => doc.data())
-          console.log(companies)
-          resolve(companies)
-        })
-    })
-  }
-
-  getAllWorkOrders = () => {
-    const workOrdersCollection = this.db.collection("workOrders")
-    if (!firebase.apps.length) {
-      return
-    }
-    return new Promise((resolve, reject) => {
-      workOrdersCollection.get()
-        .then((snapshot) => {
-          const workOrders = snapshot.docs.map(doc => doc.data())
-          console.log(workOrders)
-          resolve(workOrders)
-        })
-    })
-  }
-
-  getAllQuotations = () => {
-    const quotationsCollection = this.db.collection("quotations")
-    if (!firebase.apps.length) {
-      return
-    }
-    return new Promise((resolve, reject) => {
-      quotationsCollection.get()
-        .then((snapshot) => {
-          const quotations = snapshot.docs.map(doc => doc.data())
-          console.log(quotations)
-          resolve(quotations)
-        })
-    })
-  }
-
   signOut = () => {
     if (!this.auth) {
       return;

@@ -21,7 +21,7 @@ class Authorization extends Component {
           role: "admin",
           displayName: authUser.displayName ? authUser.displayName : "User",
           email: authUser.email,
-          profilePic: "assets/images/avatar/profile.jpg"
+          profilePic: "/assets/images/avatar/profile.jpg"
         }
         this.props.setUserData(user)
         history.push('/users')

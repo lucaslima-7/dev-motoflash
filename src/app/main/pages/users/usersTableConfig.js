@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
@@ -22,7 +23,11 @@ const columns = [
     title: "Nome",
     field: "name",
     render: rowData => (
-      rowData.name ? rowData.name : " - "
+      rowData.name ? (
+        <Link to={`'users/${rowData.id}`}>
+          {rowData.name}
+        </Link>
+      ) : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle

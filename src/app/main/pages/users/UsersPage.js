@@ -42,8 +42,13 @@ const UsersPage = ({ classes, history }) => {
   const newStatusList = ["AVAILABLE", "CANCELED"]
   const [offset, setOffset] = useState(0)
   const [modalOpen, setModalOpen] = useState(false)
+  const [search, setSearch] = useState("")
 
   const userQuery = async query => {
+    if (search.length > 0) {
+      // TODO return AlgoliaSearch
+      console.log("Tem um texto aqui dentro, pesquisa Algolia")
+    }
     const { type, page } = await handleType(query)
     return getUserData(query, type, page)
   }
@@ -77,6 +82,21 @@ const UsersPage = ({ classes, history }) => {
     })
   }
 
+  const getAlgoliaData = query => {
+    return new Promise(async resolve => {
+      const data = await getUserByName({
+        offset: query.page * query.pageSize,
+        limit: query.pageSize,
+        search
+      })
+      resolve({
+        data: data,
+        page: query.page,
+        totalCount: data.nbHits
+      })
+    })
+  }
+
   const getUserData = async (query, type, page) => {
     if (!count) {
       await getAllUsersCount()
@@ -97,10 +117,9 @@ const UsersPage = ({ classes, history }) => {
   }
 
   const getAllUsersCount = async () => {
-    console.log("Botando Count")
-    const usersCollection = db.collection("users")
+    const usersCollection = db.collection("metadatas").doc("users")
     const snap = await usersCollection.get()
-    count = snap.docs.map(doc => doc.data()).length
+    count = snap.data().count
   }
 
   const handleType = query => {
@@ -194,7 +213,6 @@ const UsersPage = ({ classes, history }) => {
             config={usersTableConfig}
             filterChips={filterChips}
             showDateFilter={false}
-            onRowClick={(e, rowData) => history.push('users/' + rowData.id)}
           />
         </Grid>
         {/* <Grid item xs={2} className="px-12">

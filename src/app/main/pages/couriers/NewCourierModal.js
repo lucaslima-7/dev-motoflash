@@ -8,22 +8,26 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import NumberFormatCustom from 'app/main/components/inputs/NumberFormatCustom';
 
-const NewUserModal = ({ open, setOpen }) => {
+const NewCourierModal = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState({
+  const [courier, setCourier] = useState({
     fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
+    email: ""
+  })
+  const [equipment, setEquipment] = useState({
+    brand: "",
+    model: "",
+    plate: "",
+    year: ""
   })
 
-  const addNewUser = async () => {
+  const addNewCourier = async () => {
     setLoading(true)
-    const user = {
-      fullName: user.fullName,
-      email: user.email,
-      password: user.password
+    const postObj = {
+      ...courier,
+      ...equipment
     }
     try {
       // await new ApiCustomers().createCustomer(customer)
@@ -44,11 +48,17 @@ const NewUserModal = ({ open, setOpen }) => {
             color="primary"
             className={"uppercase font-700 text-left mb-8 mt-24 mx-24"}
           >
-            Novo Cliente
+            Novo Motoboy
           </Typography>
         </DialogContentText>
         <Divider />
-        <Grid container justify={"center"}>
+        <Grid container justify={"center"} className="mb-12">
+          <Grid item xs={12}>
+            <Typography variant={"h6"}>Dados Básicos</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
           <Grid item xs={12} className={"mt-8"}>
             <TextField
               fullWidth
@@ -56,8 +66,8 @@ const NewUserModal = ({ open, setOpen }) => {
               name="fullName"
               label="Nome Completo"
               disabled={loading}
-              value={user.fullName}
-              onChange={e => setUser({ ...user, fullName: e.target.value })}
+              value={courier.fullName}
+              onChange={e => setCourier({ ...courier, fullName: e.target.value })}
               margin="dense"
               variant="outlined"
               InputProps={{ maxLength: 200 }}
@@ -71,7 +81,29 @@ const NewUserModal = ({ open, setOpen }) => {
               label="E-mail"
               disabled={loading}
               value={user.email}
-              onChange={e => setUser({ ...user, email: e.target.value })}
+              onChange={e => setCourier({ ...courier, email: e.target.value })}
+              margin="dense"
+              variant="outlined"
+              InputProps={{ maxLength: 200 }}
+            />
+          </Grid>
+        </Grid>
+        <Grid container justify="center">
+          <Grid item xs={12}>
+            <Typography variant={"h6"}>Detalhes do Equipamento</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid item xs={12} className={"mt-8"}>
+            <TextField
+              fullWidth
+              id="brand"
+              name="brand"
+              label="Marca"
+              disabled={loading}
+              value={equipment.brand}
+              onChange={e => setEquipment({ ...equipment, brand: e.target.value })}
               margin="dense"
               variant="outlined"
               InputProps={{ maxLength: 200 }}
@@ -80,25 +112,42 @@ const NewUserModal = ({ open, setOpen }) => {
           <Grid item xs={12} className={"mt-8"}>
             <TextField
               fullWidth
-              id="password-signup"
-              margin={"dense"}
-              label="Senha"
+              id="model"
+              name="model"
+              label="Modelo"
+              disabled={loading}
+              value={equipment.model}
+              onChange={e => setEquipment({ ...equipment, model: e.target.value })}
+              margin="dense"
               variant="outlined"
-              type={'password'}
-              value={user.password}
-              onChange={(e) => setUser({ ...user, password: e.target.value })}
+              InputProps={{ maxLength: 200 }}
+            />
+          </Grid>
+          <Grid item xs={12} className={"mt-8"}>
+            <NumberFormatCustom
+              fullWidth
+              id="plate"
+              name="plate"
+              label="Placa"
+              value={equipment.plate}
+              onChange={e => setEquipment({ ...equipment, plate: e.target.value })}
+              margin="dense"
+              variant="outlined"
+              format={'   -####'}
             />
           </Grid>
           <Grid item xs={12} className={"mt-8"}>
             <TextField
               fullWidth
-              id="password-confirm"
-              margin={"dense"}
-              label="Confirme a Senha"
+              id="year"
+              name="year"
+              label="Ano"
+              disabled={loading}
+              value={equipment.year}
+              onChange={e => setEquipment({ ...equipment, year: e.target.value })}
+              margin="dense"
               variant="outlined"
-              type={'password'}
-              value={user.confirmPassword}
-              onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
+              InputProps={{ maxLength: 200 }}
             />
           </Grid>
         </Grid>
@@ -114,7 +163,7 @@ const NewUserModal = ({ open, setOpen }) => {
         </Button>
         <Button
           disabled={loading}
-          onClick={() => addNewUser()}
+          onClick={() => addNewCourier()}
           color="primary"
           variant="contained"
         >
@@ -125,4 +174,4 @@ const NewUserModal = ({ open, setOpen }) => {
   )
 }
 
-export default NewUserModal
+export default NewCourierModal

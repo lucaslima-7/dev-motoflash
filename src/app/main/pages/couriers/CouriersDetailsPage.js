@@ -14,6 +14,7 @@ import { firestore } from 'firebase';
 import { Paper, CircularProgress, Card } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import MessageAlert from 'app/main/components/snackbar/MessageAlert';
 
 const CouriersDetailsPage = ({ match: { params } }) => {
   const db = firestore()
@@ -29,6 +30,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
     year: "-"
   })
   const [loading, setLoading] = useState(false)
+  // const [showTopCenterDialog, setMessageStatus] = useState(false)
 
   useEffect(() => {
     const getCourierInfo = async () => {
@@ -87,7 +89,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                   onChange={e => setCourier({ ...courier, fullName: e.target.value })}
                   margin="dense"
                   variant="outlined"
-                  inputProps={{ maxLength: 200 }}
+                  InputProps={{ maxLength: 200 }}
                 />
               </Grid>
               <Grid item xs={12} className={"mt-8"}>
@@ -101,7 +103,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                   onChange={e => setCourier({ ...courier, email: e.target.value })}
                   margin="dense"
                   variant="outlined"
-                  inputProps={{ maxLength: 200 }}
+                  InputProps={{ maxLength: 200 }}
                 />
               </Grid>
               <Grid item xs={12} className={"mt-8"}>
@@ -203,6 +205,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
           </Paper>
         </Grid>
       </Grid>
+      {/* <MessageAlert /> */}
     </Layout>
   )
 }

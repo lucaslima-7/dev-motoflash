@@ -5,7 +5,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
-import { amber, green, yellow, red } from '@material-ui/core/colors';
+import { green, yellow, red, teal } from '@material-ui/core/colors';
 import WarningIcon from '@material-ui/icons/Warning';
 
 const variantIcon = {
@@ -23,7 +23,7 @@ const styles = theme => ({
     backgroundColor: red[300],
   },
   info: {
-    backgroundColor: amber[300],
+    backgroundColor: teal[300],
   },
   warning: {
     backgroundColor: yellow[300],
@@ -64,17 +64,7 @@ const ContentWrapper = ({ classes, className, message, onClose, variant, ...othe
   );
 }
 
-const MessageAlert = ({ variant, message }) => {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
-
+const MessageAlert = ({ variant, message, showTopCenterDialog, setMessageOpen }) => {
   return (
     <Snackbar
       anchorOrigin={{
@@ -82,12 +72,13 @@ const MessageAlert = ({ variant, message }) => {
         horizontal: 'center',
       }}
       TransitionComponent={<Slide direction="down" />}
-      open={open}
-      autoHideDuration={4000}
-      onClose={handleClose}
+      open={showTopCenterDialog}
+      onRequestClose={() => setMessageOpen(false)}
+      autoHideDuration={3000}
+      onClose={() => setMessageOpen(false)}
     >
       <ContentWrapper
-        onClose={handleClose}
+        onClose={() => setMessageOpen(false)}
         variant={variant}
         message={message}
       />

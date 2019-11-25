@@ -92,9 +92,9 @@ const WorkOrdersPage = ({ classes, history }) => {
   }
 
   const getAllWorkOrdersCount = async () => {
-    const workOrdersCollection = db.collection("workOrders")
+    const workOrdersCollection = db.collection("metadatas").doc("workOrders")
     const snap = await workOrdersCollection.get()
-    count = snap.docs.map(doc => doc.data()).length
+    count = snap.data().count
   }
 
   const handleType = query => {

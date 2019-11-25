@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Chip from "@material-ui/core/Chip";
@@ -26,7 +27,11 @@ const columns = [
     title: "Nome",
     field: "name",
     render: rowData => (
-      rowData.name ? rowData.name : " - "
+      rowData.name ? (
+        <Link to={`'couriers/${rowData.id}`}>
+          {rowData.name}
+        </Link>
+      ) : " - "
     ),
     cellStyle: {
       ...tableStyle.cellStyle
