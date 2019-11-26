@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
     height: 40,
     paddingRight: 12,
     '&.active': {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: "#80D8FF70",
+      borderRight: `6px ${theme.palette.secondary.main} solid`,
       color: theme.palette.secondary.contrastText + '!important',
       pointerEvents: 'none',
       transition: 'border-radius .15s cubic-bezier(0.4,0.0,0.2,1)',

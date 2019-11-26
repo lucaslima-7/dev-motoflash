@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import NavbarLayout from './NavbarLayout';
 import { useSelector } from 'react-redux';
+import defaultTheme from 'app/config/themes/defaultTheme';
 
 const navbarWidth = 220;
 
@@ -30,7 +31,7 @@ const styles = theme => ({
     width: navbarWidth,
     minWidth: navbarWidth,
     height: '100%',
-    background: "white",
+    background: defaultTheme.palette.primary.main,
     zIndex: 4,
     left: 0,
     transition: theme.transitions.create(['width', 'min-width'], {

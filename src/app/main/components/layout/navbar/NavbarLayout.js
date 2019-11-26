@@ -7,6 +7,7 @@ import Navigation from './Navigation';
 import navMenus from "app/config/navigation/NavigationItems";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import defaultTheme from 'app/config/themes/defaultTheme';
 
 const NavbarLayout = (props) => {
   const dispatch = useDispatch();
@@ -14,9 +15,12 @@ const NavbarLayout = (props) => {
   const folded = navMenu.folded;
 
   return (
-    <div className={clsx("flex flex-col overflow-hidden h-full", props.className)}>
+    <div
+      style={{ background: defaultTheme.palette.primary.main }}
+      className={clsx("flex flex-col overflow-hidden h-full", props.className)}
+    >
       <AppBar
-        color="primary"
+        color="secondary"
         position="static"
         elevation={0}
         className="flex flex-row items-center flex-shrink h-64 min-h-64 pr-12"
