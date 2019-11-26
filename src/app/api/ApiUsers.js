@@ -5,7 +5,9 @@ export default class ApiUsers extends ApiConfig {
   addUser(options) {
     const config = {
       data: {
-        ...options
+        user: {
+          ...options
+        }
       }
     }
     const url = `/users`
