@@ -53,12 +53,6 @@ const NewCourierModal = ({ open, setOpen }) => {
         </DialogContentText>
         <Divider />
         <Grid container justify={"center"} className="mb-12">
-          <Grid item xs={12}>
-            <Typography variant={"h6"}>Dados Básicos</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
           <Grid item xs={12} className={"mt-8"}>
             <TextField
               fullWidth
@@ -80,7 +74,7 @@ const NewCourierModal = ({ open, setOpen }) => {
               name="email"
               label="E-mail"
               disabled={loading}
-              value={user.email}
+              value={courier.email}
               onChange={e => setCourier({ ...courier, email: e.target.value })}
               margin="dense"
               variant="outlined"
@@ -90,7 +84,7 @@ const NewCourierModal = ({ open, setOpen }) => {
         </Grid>
         <Grid container justify="center">
           <Grid item xs={12}>
-            <Typography variant={"h6"}>Detalhes do Equipamento</Typography>
+            <Typography variant={"h6"}>Detalhes da Moto</Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider />

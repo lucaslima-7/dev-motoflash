@@ -43,7 +43,7 @@ const Routes = () => {
         <PrivateRoute auth={pageAccess.workOrders} exact path="/workOrders" component={WorkOrdersPage} />
         <PrivateRoute auth={pageAccess.workOrders} exact path="/workOrders/:workOrderId" component={WorkOrdersDetailsPage} />
         <PrivateRoute auth={pageAccess.payments} exact path="/payments" component={PaymentsPage} />
-        <PrivateRoute auth={pageAccess.config} exact path="/configuration" component={ConfigurationPage} />
+        <PrivateRoute auth={pageAccess.config} exact path="/configurations" component={ConfigurationPage} />
         <Route path="*" component={NotFoundPage} />
       </Switch>
     </Router>

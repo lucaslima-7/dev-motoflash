@@ -1,6 +1,7 @@
 import React from "react"
-import { Link } from "react-router-dom";
+import Link from "@material-ui/core/Link";
 import Button from "@material-ui/core/Button";
+import history from "@history";
 import Typography from "@material-ui/core/Typography";
 import Chip from "@material-ui/core/Chip";
 import { unixtimestampToDate } from "app/utils/DateUtil"
@@ -28,7 +29,13 @@ const columns = [
     field: "name",
     render: rowData => (
       rowData.name ? (
-        <Link to={`'couriers/${rowData.id}`}>
+        <Link
+          variant="inherit"
+          underline="none"
+          className={"cursor-pointer font-800"}
+          color="primary"
+          onClick={() => history.push(`couriers/${rowData.id}`)}
+        >
           {rowData.name}
         </Link>
       ) : " - "

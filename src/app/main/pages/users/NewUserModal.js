@@ -8,6 +8,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import ApiUsers from "app/api/ApiUsers";
 
 const NewUserModal = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false)
@@ -20,13 +21,13 @@ const NewUserModal = ({ open, setOpen }) => {
 
   const addNewUser = async () => {
     setLoading(true)
-    const user = {
-      fullName: user.fullName,
+    const options = {
+      name: user.fullName,
       email: user.email,
       password: user.password
     }
     try {
-      // await new ApiCustomers().createCustomer(customer)
+      await new ApiUsers().addUser(options)
       setOpen(false)
     } catch (error) {
       console.log("error")

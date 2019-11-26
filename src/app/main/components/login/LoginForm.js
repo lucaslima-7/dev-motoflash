@@ -61,7 +61,6 @@ const LoginForm = ({ history }) => {
   return (
     <>
       <Paper className={"rounded-1 shadow-lg p-10"}>
-        {/* TODO Logo Motoflash */}
         <Grid container justify="center">
           {step === 0 && (
             <>

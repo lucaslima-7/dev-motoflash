@@ -1,5 +1,6 @@
 import React from "react"
-import { Link } from "react-router-dom";
+import Link from "@material-ui/core/Link";
+import history from "@history";
 import Button from "@material-ui/core/Button";
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
@@ -24,7 +25,13 @@ const columns = [
     field: "name",
     render: rowData => (
       rowData.name ? (
-        <Link to={`'users/${rowData.id}`}>
+        <Link
+          variant="inherit"
+          underline="none"
+          className={"no-underline cursor-pointer font-800"}
+          color="primary"
+          onClick={() => history.push(`users/${rowData.id}`)}
+        >
           {rowData.name}
         </Link>
       ) : " - "

@@ -82,6 +82,10 @@ const UsersPage = ({ classes, history }) => {
     })
   }
 
+  const getUserByName = () => {
+
+  }
+
   const getAlgoliaData = query => {
     return new Promise(async resolve => {
       const data = await getUserByName({

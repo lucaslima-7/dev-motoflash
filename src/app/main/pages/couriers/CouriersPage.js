@@ -8,6 +8,8 @@ import {
   Typography,
   Divider,
   Button,
+  Card,
+  CardContent
 } from "@material-ui/core";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
@@ -18,6 +20,8 @@ import { firestore } from 'firebase';
 import clsx from 'clsx';
 import defaultTheme from 'app/config/themes/defaultTheme';
 import NewCourierModal from './NewCourierModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 const styles = theme => ({
   panelOppened: {
@@ -162,7 +166,7 @@ const CouriersPage = ({ classes, history }) => {
         <Grid item xs={12} className={"mb-24 mx-12"}>
           <Divider />
         </Grid>
-        <Grid item xs={9} className="px-12">
+        <Grid item xs={12} className="px-12">
           {/* <Grid item xs={12} className="mb-12">
           {filterChips && (
             <ExpansionPanel className={classes.panel}>
@@ -196,20 +200,6 @@ const CouriersPage = ({ classes, history }) => {
             filterChips={filterChips}
             showDateFilter={false}
           />
-        </Grid>
-        <Grid item xs={3} className={clsx(classes.bgDetails, "px-12")}>
-          <Card className={classes.panel}>
-            <CardContent>
-              <Grid container justify="flex-start" alignItems="center">
-                <Grid item xs={12} className={"my-0"}>
-                  <Typography variant="h6">Algum texto curioso</Typography>
-                </Grid>
-                <Grid item xs={12} className={"my-0"}>
-                  <Typography variant="body1">texto de teste</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
         </Grid>
         <NewCourierModal open={modalOpen} setOpen={setModalOpen} />
       </Grid>
