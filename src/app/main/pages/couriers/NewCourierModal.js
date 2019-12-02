@@ -1,6 +1,11 @@
 import React, { useState } from "react";
+import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -138,7 +143,7 @@ const NewCourierModal = ({ open, setOpen }) => {
             variant="outlined"
           />
         </Grid>
-        {haveCHN ? (
+        {courier.haveCNH ? (
           <Grid item xs={12} className={"mt-8"}>
             <NumberFormatCustom
               fullWidth
@@ -169,7 +174,7 @@ const NewCourierModal = ({ open, setOpen }) => {
               />
             </Grid>
           )}
-        {haveCNH && (
+        {courier.haveCNH && (
           <Grid container justify="center">
             <Grid item xs={12}>
               <Typography variant={"h6"}>Detalhes da Moto</Typography>

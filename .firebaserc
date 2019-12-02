@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "motoflash-a2f12"
+  },
+  "targets": {
+    "motoflash-a2f12": {
+      "hosting": {
+        "backoffice": [
+          "motoflash-a2f12"
+        ]
+      }
+    }
   }
 }
