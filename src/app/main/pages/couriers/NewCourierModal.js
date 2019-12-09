@@ -13,8 +13,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -173,7 +171,7 @@ const NewCourierModal = ({ classes, open, setOpen }) => {
               disabled={loading}
               value={courier.cnhNumber}
               format={'###########'}
-              onBlur={e => setCourier({ ...courier, chnNumber: e.target.value })}
+              onBlur={e => setCourier({ ...courier, cnhNumber: e.target.value })}
               margin="dense"
               variant="outlined"
             />
@@ -185,7 +183,7 @@ const NewCourierModal = ({ classes, open, setOpen }) => {
               <Typography variant={"h6"} color="primary">Detalhes da Moto</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Divider />
+              <Divider className="mb-16" />
             </Grid>
             <Grid item xs={12} className={"mt-8"}>
               <TextField
