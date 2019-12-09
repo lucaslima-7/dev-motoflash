@@ -1,16 +1,32 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import * as Actions from "app/store/actions";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
+import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from "@material-ui/core/TextField";
 import ApiUsers from "app/api/ApiUsers";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import clsx from "clsx";
+import { isNotBlank, isValidEmail, isValidPassword } from "app/utils/ValidationUtil";
+import { formatApiError } from "app/utils/FirebaseErrors";
 
-const NewUserModal = ({ open, setOpen }) => {
+const styles = () => ({
+  dialog: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  }
+})
+
+const NewUserModal = ({ classes, open, setOpen }) => {
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState({
     fullName: "",
@@ -18,6 +34,26 @@ const NewUserModal = ({ open, setOpen }) => {
     password: "",
     confirmPassword: ""
   })
+
+  const validateFields = () => {
+    if (user.password !== user.confirmPassword) {
+      return dispatch(Actions.showMessageDialog('warning', 'As senhas não conferem!'))
+    }
+
+    if (isNotBlank(user.fullName)) {
+      if (isValidEmail(user.email)) {
+        if (isValidPassword(user.password)) {
+          addNewUser()
+        } else {
+          dispatch(Actions.showMessageDialog('warning', 'Senha inválida'))
+        }
+      } else {
+        dispatch(Actions.showMessageDialog('warning', 'Email inválido'))
+      }
+    } else {
+      dispatch(Actions.showMessageDialog('warning', 'Nome inválido'))
+    }
+  }
 
   const addNewUser = async () => {
     setLoading(true)
@@ -28,9 +64,10 @@ const NewUserModal = ({ open, setOpen }) => {
     }
     try {
       await new ApiUsers().addUser(options)
+      dispatch(Actions.showMessageDialog('success', 'Usuário criado com sucesso!'))
       setOpen(false)
     } catch (error) {
-      console.log("error")
+      dispatch(Actions.showMessageDialog('error', formatApiError(error.response.data)))
     } finally {
       setLoading(false)
     }
@@ -38,17 +75,20 @@ const NewUserModal = ({ open, setOpen }) => {
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} PaperProps={{ style: { margin: 0, maxWidth: 400 } }}>
-      <DialogContent className={"p-10"}>
-        <DialogContentText>
-          <Typography
-            variant="h6"
-            color="primary"
-            className={"uppercase font-700 text-left mb-8 mt-24 mx-24"}
-          >
-            Novo Cliente
+      <DialogTitle disableTypography className={clsx(classes.dialog)}>
+        <Typography
+          variant="h6"
+          color="primary"
+          className={"font-700 text-left mr-24"}
+        >
+          Novo Cliente
           </Typography>
-        </DialogContentText>
-        <Divider />
+        <IconButton onClick={() => setOpen(false)}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider />
+      <DialogContent>
         <Grid container justify={"center"}>
           <Grid item xs={12} className={"mt-8"}>
             <TextField
@@ -102,28 +142,21 @@ const NewUserModal = ({ open, setOpen }) => {
               onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
             />
           </Grid>
+          <Grid item xs={12} className={"mt-16 text-right"}>
+            <Button
+              disabled={loading}
+              onClick={() => validateFields()}
+              color="primary"
+              variant="contained"
+              className="capitalize"
+            >
+              {loading ? "Salvando..." : "Salvar"}
+            </Button>
+          </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions>
-        <Button
-          disabled={loading}
-          onClick={() => setOpen(false)}
-          color="primary"
-          variant="outlined"
-        >
-          Cancelar
-        </Button>
-        <Button
-          disabled={loading}
-          onClick={() => addNewUser()}
-          color="primary"
-          variant="contained"
-        >
-          {loading ? "Salvando..." : "Salvar"}
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
 
-export default NewUserModal
+export default withStyles(styles)(NewUserModal)

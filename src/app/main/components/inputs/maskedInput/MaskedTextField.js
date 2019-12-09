@@ -3,7 +3,7 @@ import { TextField } from "@material-ui/core";
 import MaskedInput from "react-text-mask";
 
 const TextMaskCustom = props => {
-  const { inputRef, ...other } = props;
+  const { inputRef, mask, ...other } = props;
 
   return (
     <MaskedInput
@@ -11,23 +11,7 @@ const TextMaskCustom = props => {
       ref={ref => {
         inputRef(ref ? ref.inputElement : null);
       }}
-      mask={[
-        "(",
-        /[1-9]/,
-        /\d/,
-        ")",
-        " ",
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-        "-",
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/
-      ]}
+      mask={[/[a-zA-Z]/, /[a-zA-Z]/, /[a-zA-Z]/, '-', /\d/, /\d/, /\d/, /\d/]}
       placeholderChar={"\u2000"}
       showMask
       keepCharPositions={true}

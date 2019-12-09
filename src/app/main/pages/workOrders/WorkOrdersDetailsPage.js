@@ -36,7 +36,7 @@ const WorkOrdersDetailsPage = ({ classes, match: { params } }) => {
     const getWorkOrderInfo = async () => {
       setLoading(true)
       try {
-        const workOrdersRef = db.collection('workOrders').doc(params.workOrderId)
+        const workOrdersRef = db.collection('workorders').doc(params.workOrderId)
         const snapshot = await workOrdersRef.get()
         setWorkOrder({
           userId: snapshot.data().userId,

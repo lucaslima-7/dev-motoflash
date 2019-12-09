@@ -148,12 +148,10 @@ const PaymentsPage = ({ classes }) => {
 
   return (
     <Layout>
-      <Grid container justify="center">
-        <Grid item xs={12} className={"px-24 py-4"}>
-          <Typography className={"text-left mt-8 font-700"} variant={"h4"}>Pagamentos</Typography>
-        </Grid>
-        <Grid item xs={12} className={"mb-24 mx-12"}>
-          <Divider />
+      <Grid container justify="center" className="px-16 py-12">
+        <Grid item xs={12} className="px-24">
+          <Typography variant="h5" color="primary" className="font-900">Pagamentos</Typography>
+          <Divider className="mb-12" />
         </Grid>
         <Grid item xs={12} className="px-12">
           {/* <Grid item xs={12} className="mb-12">

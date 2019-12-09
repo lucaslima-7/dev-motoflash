@@ -10,18 +10,18 @@ const Navigation = (props) => {
   const verticalNav = (
     <List className={clsx("navigation whitespace-no-wrap")}>
       {
-        navigation.map((item) => (
+        navigation.map(item => (
 
-          <React.Fragment key={item.id}>
+          <div key={item.id}>
 
             {item.type === 'item' && (
               <NavItem item={item} nestedLevel={0} active={active} dense={dense} />
             )}
 
             {item.type === 'divider' && (
-              <Divider className="my-16" />
+              <Divider className="my-4" />
             )}
-          </React.Fragment>
+          </div>
         ))
       }
     </List>

@@ -46,7 +46,7 @@ const WorkOrdersPage = ({ classes, history }) => {
   const getAllWorkOrders = ({ limit, type, page }) => {
     if (type === "prev") {
       return new Promise(async (resolve, reject) => {
-        const countRef = db.collection("workOrders").orderBy("createdDate").startAt(first[page]).limit(limit)
+        const countRef = db.collection("workorders").orderBy("createdDate").startAt(first[page]).limit(limit)
         const snapshot = await countRef.get()
         last[page] = snapshot.docs[snapshot.docs.length - 1]
         first[page] = snapshot.docs[0]
@@ -62,7 +62,7 @@ const WorkOrdersPage = ({ classes, history }) => {
       if (last[page - 1]) {
         temp = last[page - 1]
       }
-      const countRef = db.collection("workOrders").orderBy("createdDate").startAfter(temp).limit(limit)
+      const countRef = db.collection("workorders").orderBy("createdDate").startAfter(temp).limit(limit)
       const snapshot = await countRef.get()
       last[page] = snapshot.docs[snapshot.docs.length - 1]
       first[page] = snapshot.docs[0]
@@ -92,7 +92,7 @@ const WorkOrdersPage = ({ classes, history }) => {
   }
 
   const getAllWorkOrdersCount = async () => {
-    const workOrdersCollection = db.collection("metadatas").doc("workOrders")
+    const workOrdersCollection = db.collection("metadatas").doc("workorders")
     const snap = await workOrdersCollection.get()
     count = snap.data().count
   }

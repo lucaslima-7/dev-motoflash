@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import * as Actions from 'app/store/actions';
 import Layout from 'app/main/components/layout/Layout';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -6,18 +8,19 @@ import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
+import ChipStatus from 'app/main/components/chipStatus/ChipStatus';
 import { firestore } from 'firebase';
-import { Paper, CircularProgress, Card } from '@material-ui/core';
+import { Paper, CircularProgress } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import MessageAlert from 'app/main/components/snackbar/MessageAlert';
+import { isNotBlank, isValidEmail } from "app/utils/ValidationUtil";
+import ApiCourier from 'app/api/ApiCouriers';
 
 const CouriersDetailsPage = ({ match: { params } }) => {
   const db = firestore()
+  const dispatch = useDispatch()
   const [courier, setCourier] = useState({
     fullName: "",
     email: "",
@@ -30,7 +33,6 @@ const CouriersDetailsPage = ({ match: { params } }) => {
     year: "-"
   })
   const [loading, setLoading] = useState(false)
-  // const [showTopCenterDialog, setMessageStatus] = useState(false)
 
   useEffect(() => {
     const getCourierInfo = async () => {
@@ -60,23 +62,47 @@ const CouriersDetailsPage = ({ match: { params } }) => {
     getCourierInfo()
   }, [params.courierId, db])
 
-  const editCourier = () => {
-    console.log("funcionando")
+  const validateFields = () => {
+    if (isNotBlank(courier.fullName)) {
+      if (isValidEmail(courier.email)) {
+        editCourier()
+      } else {
+        dispatch(Actions.showMessageDialog('warning', 'Email inválido'))
+      }
+    } else {
+      dispatch(Actions.showMessageDialog('warning', 'Nome inválido'))
+    }
+  }
+
+  const editCourier = async () => {
+    const options = {
+      name: courier.fullName,
+      email: courier.email
+    }
+    setLoading(true)
+    try {
+      await new ApiCourier().editUser({
+        options,
+        id: params.userId
+      })
+      dispatch(Actions.showMessageDialog('success', 'Usuário editado com sucesso'))
+    } catch (error) {
+      console.log(error)
+      dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <Layout showBackButton={'/couriers'}>
-      <Grid container justify="flex-start">
-        <Grid item xs={12} className={"px-24 py-4"}>
-          <Typography className={"text-left mt-8 font-700"} variant={"h4"}>
-            Detalhes do Motoboy
-          </Typography>
+      <Grid container justify="flex-start" className="px-16 py-12">
+        <Grid item xs={12} className="px-24">
+          <Typography variant="h5" color="primary" className="font-900">Usuários</Typography>
+          <Divider className="mb-12" />
         </Grid>
-        <Grid item xs={12} className={"mb-24 mx-12"}>
-          <Divider />
-        </Grid>
-        <Grid item xs={5} className="px-12">
-          <Paper elevation={3} className="p-12">
+        <Grid item xs={12} md={6} lg={4} className="px-12">
+          <Paper className="shadow-lighter p-20">
             <Grid container justify={"center"}>
               <Grid item xs={12} className={"mt-8"}>
                 <TextField
@@ -112,63 +138,42 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                     className="ml-4"
                     primary={"Status"}
                     classes={{ primary: 'text-14 font-700 list-item-text-primary' }} />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={courier.active}
-                        color={"primary"}
-                        onClick={() => setCourier({ ...courier, active: true })}
-                      />
-                    }
-                    label={"Ativo"}
-                    labelPlacement="end"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={!courier.active}
-                        color={"primary"}
-                        onClick={() => setCourier({ ...courier, active: !courier.active })}
-                      />
-                    }
-                    label={"Inativo"}
-                    labelPlacement="end"
-                  />
+                  <ChipStatus status={courier.active ? 'ATIVO' : 'INATIVO'} />
                 </ListItem>
               </Grid>
-              <Grid item xs={12} className={"mt-16"}>
+              <Grid item xs={12} className={"mt-16 text-right"}>
                 <Button
                   disabled={loading}
                   onClick={() => editCourier()}
                   variant="contained"
-                  className="bg-red-A400 hover:bg-red-700 float-left shadow-none"
+                  className="capitalize text-white bg-red-A400 hover:bg-red-700 mr-8"
                 >
                   {loading ? (
-                    <CircularProgress size={23} className="mr-12" />
+                    <CircularProgress size={23} />
                   ) : (<FontAwesomeIcon icon={faTrashAlt} className="mr-12" />)}
-                  {loading ? "Carregando..." : "Deletar"}
+                  {loading ? "" : "Deletar"}
                 </Button>
                 <Button
                   disabled={loading}
                   onClick={() => editCourier()}
                   color="primary"
                   variant="contained"
-                  className="float-right shadow-none"
+                  className="capitalize shadow-none"
                 >
                   {loading ? (
-                    <CircularProgress size={23} className="mr-12" />
+                    <CircularProgress size={23} />
                   ) : (<FontAwesomeIcon icon={faEdit} className="mr-12" />)}
-                  {loading ? "Carregando..." : "Editar"}
+                  {loading ? "" : "Editar"}
                 </Button>
               </Grid>
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={5} className="px-12">
-          <Paper elevation={3} className="p-16">
+        <Grid item xs={12} md={6} lg={4} className="px-12">
+          <Paper className="shadow-lighter p-20">
             <Grid container justify="center">
               <Grid item xs={12}>
-                <Typography variant="h6">Detalhes da Moto</Typography>
+                <Typography variant="h6" color="primary">Veículo</Typography>
               </Grid>
               <Grid item xs={12}>
                 <Divider />
@@ -205,7 +210,6 @@ const CouriersDetailsPage = ({ match: { params } }) => {
           </Paper>
         </Grid>
       </Grid>
-      {/* <MessageAlert /> */}
     </Layout>
   )
 }

@@ -145,12 +145,13 @@ const UsersPage = ({ classes, history }) => {
     <>
       <FormGroup row className={"items-center"}>
         <Typography color="primary" variant="body1" className={"mr-12 uppercase font-900"}>Status: </Typography>
-        {newStatusList.map(item => {
+        {newStatusList.map((index, item) => {
           return (
             <>
               <FormControlLabel
                 control={
                   <Checkbox
+                    key={index}
                     icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                     checkedIcon={<CheckBoxIcon fontSize="small" />}
                     checked={item.name === selectedStatus}
@@ -177,12 +178,10 @@ const UsersPage = ({ classes, history }) => {
 
   return (
     <Layout>
-      <Grid container justify="center">
-        <Grid item xs={12} className={"px-24 py-4"}>
-          <Typography className={"text-left mt-8 font-700"} variant={"h4"}>Usuários</Typography>
-        </Grid>
-        <Grid item xs={12} className={"mb-24 mx-12"}>
-          <Divider />
+      <Grid container justify="center" className="px-16 py-12">
+        <Grid item xs={12} className="px-24">
+          <Typography variant="h5" color="primary" className="font-900">Usuários</Typography>
+          <Divider className="mb-12" />
         </Grid>
         <Grid item xs={12} className="px-12">
           {/* <Grid item xs={12} className="mb-12">

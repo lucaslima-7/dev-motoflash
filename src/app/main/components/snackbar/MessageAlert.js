@@ -1,33 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Actions from 'app/store/actions';
 import clsx from 'clsx';
-import { Snackbar, SnackbarContent, withStyles, IconButton, Slide } from '@material-ui/core'
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
+import { Snackbar, SnackbarContent, withStyles, Icon, IconButton, Slide } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import { green, yellow, red, teal } from '@material-ui/core/colors';
-import WarningIcon from '@material-ui/icons/Warning';
-
-const variantIcon = {
-  success: CheckCircleIcon,
-  warning: WarningIcon,
-  error: ErrorIcon,
-  info: InfoIcon,
-};
 
 const styles = theme => ({
-  success: {
-    backgroundColor: green[600],
-  },
-  error: {
-    backgroundColor: red[300],
-  },
-  info: {
-    backgroundColor: teal[300],
-  },
-  warning: {
-    backgroundColor: yellow[300],
-  },
   icon: {
     fontSize: 20,
   },
@@ -37,53 +15,63 @@ const styles = theme => ({
   },
   message: {
     display: 'flex',
+    fontWeight: 900,
     alignItems: 'center',
   },
 });
 
-const ContentWrapper = ({ classes, className, message, onClose, variant, ...other }) => {
-  const Icon = variantIcon[variant];
+const variantIcon = {
+  success: "check_circle",
+  warning: "warning",
+  error: "error_outline",
+  info: "info"
+};
 
-  return (
-    <SnackbarContent
-      className={clsx(classes[variant], className)}
-      aria-describedby="client-snackbar"
-      message={
-        <span id="client-snackbar" className={classes.message}>
-          <Icon className={clsx(classes.icon, classes.iconVariant)} />
-          {message}
-        </span>
-      }
-      action={[
-        <IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
-          <CloseIcon className={classes.icon} />
-        </IconButton>,
-      ]}
-      {...other}
-    />
-  );
+const variantStyles = {
+  success: "text-green-900 bg-green-A200",
+  error: "text-red-900 bg-red-A200",
+  info: "text-blue-900 bg-blue-A200",
+  warning: "text-yellow-900 bg-yellow-A200",
 }
 
-const MessageAlert = ({ variant, message, showTopCenterDialog, setMessageOpen }) => {
+const SlideTransition = (props) => {
+  return <Slide {...props} direction="down" />
+}
+
+const MessageAlert = memo(({ classes }) => {
+  const dispatch = useDispatch();
+  const options = useSelector(({ ui }) => ui)
+
   return (
     <Snackbar
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'center',
       }}
-      TransitionComponent={<Slide direction="down" />}
-      open={showTopCenterDialog}
-      onRequestClose={() => setMessageOpen(false)}
-      autoHideDuration={3000}
-      onClose={() => setMessageOpen(false)}
+      TransitionComponent={SlideTransition}
+      open={options.showDialog}
+      autoHideDuration={5000}
+      onClose={() => dispatch(Actions.clearMessageDialog())}
     >
-      <ContentWrapper
-        onClose={() => setMessageOpen(false)}
-        variant={variant}
-        message={message}
+      <SnackbarContent
+        className={clsx(variantStyles[options.dialogType])}
+        aria-describedby="client-snackbar"
+        message={
+          <span id="client-snackbar" className={classes.message}>
+            <Icon className={clsx(classes.icon, classes.iconVariant)}>
+              {variantIcon[options.dialogType]}
+            </Icon>
+            {options.dialogMessage}
+          </span>
+        }
+        action={[
+          <IconButton key="close" aria-label="close" color="inherit" onClick={() => Actions.clearMessageDialog()}>
+            <CloseIcon className={classes.icon} />
+          </IconButton>,
+        ]}
       />
     </Snackbar>
   )
-}
+})
 
 export default withStyles(styles)(MessageAlert)

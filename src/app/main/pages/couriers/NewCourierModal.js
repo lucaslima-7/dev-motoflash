@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import * as Actions from "app/store/actions";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -8,67 +10,85 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import NumberFormatCustom from 'app/main/components/inputs/numberInput/NumberFormatCustom';
-import MaskedTextField from 'app/main/components/inputs/maskedInput/MaskedTextField';
 import ApiCourier from "app/api/ApiCouriers";
+import { isNotBlank, isValidEmail, isValidPassword } from "app/utils/ValidationUtil";
+import { formatAuthError, formatApiError } from "app/utils/FirebaseErrors";
+import withStyles from "@material-ui/core/styles/withStyles";
+import MaskedTextField from "app/main/components/inputs/maskedInput/MaskedTextField";
 
-const NewCourierModal = ({ open, setOpen }) => {
+const styles = () => ({
+  dialog: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  }
+})
+
+const NewCourierModal = ({ classes, open, setOpen }) => {
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [courier, setCourier] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "motoflash123",
-    haveCNH: false,
+    cnh: false,
     cnhNumber: "",
-    rg: "",
     mobilePhone: ""
   })
-  const [equipment, setEquipment] = useState({
+  const [currentEquipment, setcurrentEquipment] = useState({
     brand: "",
     model: "",
     plate: "",
-    year: ""
+    year: new Date().getFullYear()
   })
+
+  const validateFields = () => {
+
+  }
 
   const addNewCourier = async () => {
     setLoading(true)
     const postObj = {
       ...courier,
-      ...equipment
+      ...currentEquipment
     }
     try {
       await new ApiCourier().addCourier(postObj)
+      dispatch(Actions.showMessageDialog('success', 'Usuário criado com sucesso!'))
       setOpen(false)
     } catch (error) {
-      console.log("error")
+      console.log(error)
+      dispatch(Actions.showMessageDialog('error', formatApiError(error.response.data)))
     } finally {
       setLoading(false)
     }
   }
 
-  const handleMobilePhone = value => {
-    const formattedValue = value.replace(/\D/g, "")
-    setCourier({ ...courier, mobilePhone: `+55${formattedValue}` })
-  }
-
   return (
     <Dialog open={open} onClose={() => setOpen(false)} PaperProps={{ style: { margin: 0, maxWidth: 400 } }}>
-      <DialogContent className={"p-10"}>
-        <DialogContentText>
-          <Typography
-            variant="h6"
-            color="primary"
-            className={"uppercase font-700 text-left mb-8 mt-24 mx-24"}
-          >
-            Novo Motoboy
+      <DialogTitle disableTypography className={clsx(classes.dialog)}>
+        <Typography
+          variant="h6"
+          color="primary"
+          className={"font-700 text-left mr-24"}
+        >
+          Novo Entregador
           </Typography>
-        </DialogContentText>
-        <Divider />
+        <IconButton onClick={() => setOpen(false)}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider />
+      <DialogContent className={"p-10"}>
         <Grid container justify={"center"} className="mb-12">
           <Grid item xs={12} className={"mt-8"}>
             <ListItem className={clsx('list-item px-0 pt-4')}>
@@ -79,9 +99,9 @@ const NewCourierModal = ({ open, setOpen }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={courier.haveCNH}
+                    checked={courier.cnh}
                     color={"primary"}
-                    onClick={() => setCourier({ ...courier, haveCNH: true })}
+                    onClick={() => setCourier({ ...courier, cnh: true })}
                   />
                 }
                 label={"Moto"}
@@ -90,9 +110,9 @@ const NewCourierModal = ({ open, setOpen }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={!courier.haveCNH}
+                    checked={!courier.cnh}
                     color={"primary"}
-                    onClick={() => setCourier({ ...courier, haveCNH: !courier.haveCNH })}
+                    onClick={() => setCourier({ ...courier, cnh: !courier.cnh })}
                   />
                 }
                 label={"Bicicleta"}
@@ -104,12 +124,12 @@ const NewCourierModal = ({ open, setOpen }) => {
         <Grid item xs={12} className={"mt-8"}>
           <TextField
             fullWidth
-            id="fullName"
-            name="fullName"
+            id="name"
+            name="name"
             label="Nome Completo"
             disabled={loading}
-            value={courier.fullName}
-            onChange={e => setCourier({ ...courier, fullName: e.target.value })}
+            value={courier.name}
+            onChange={e => setCourier({ ...courier, name: e.target.value })}
             margin="dense"
             variant="outlined"
             InputProps={{ maxLength: 100 }}
@@ -134,16 +154,16 @@ const NewCourierModal = ({ open, setOpen }) => {
             fullWidth
             id="mobilePhone"
             name="mobilePhone"
-            label="Mobile Phone"
+            label="Celular"
             disabled={loading}
             value={courier.mobilePhone}
             format={'(##) #####-####'}
-            onBlur={e => handleMobilePhone(e.target.value)}
+            onBlur={e => setCourier({ ...courier, mobilePhone: e.target.value })}
             margin="dense"
             variant="outlined"
           />
         </Grid>
-        {courier.haveCNH ? (
+        {courier.cnh && (
           <Grid item xs={12} className={"mt-8"}>
             <NumberFormatCustom
               fullWidth
@@ -158,26 +178,11 @@ const NewCourierModal = ({ open, setOpen }) => {
               variant="outlined"
             />
           </Grid>
-        ) : (
-            <Grid item xs={12} className={"mt-8"}>
-              <MaskedTextField
-                fullWidth
-                id="rg"
-                name="rg"
-                label="RG"
-                disabled={loading}
-                value={courier.rg}
-                mask={[/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /(\dxX)/]}
-                onBlur={e => setCourier({ ...courier, rg: e.target.value })}
-                margin="dense"
-                variant="outlined"
-              />
-            </Grid>
-          )}
-        {courier.haveCNH && (
-          <Grid container justify="center">
+        )}
+        {courier.cnh && (
+          <Grid container justify="center" className={"mt-16"}>
             <Grid item xs={12}>
-              <Typography variant={"h6"}>Detalhes da Moto</Typography>
+              <Typography variant={"h6"} color="primary">Detalhes da Moto</Typography>
             </Grid>
             <Grid item xs={12}>
               <Divider />
@@ -189,8 +194,8 @@ const NewCourierModal = ({ open, setOpen }) => {
                 name="brand"
                 label="Marca"
                 disabled={loading}
-                value={equipment.brand}
-                onChange={e => setEquipment({ ...equipment, brand: e.target.value })}
+                value={currentEquipment.brand}
+                onChange={e => setcurrentEquipment({ ...currentEquipment, brand: e.target.value })}
                 margin="dense"
                 variant="outlined"
                 InputProps={{ maxLength: 50 }}
@@ -203,24 +208,25 @@ const NewCourierModal = ({ open, setOpen }) => {
                 name="model"
                 label="Modelo"
                 disabled={loading}
-                value={equipment.model}
-                onChange={e => setEquipment({ ...equipment, model: e.target.value })}
+                value={currentEquipment.model}
+                onChange={e => setcurrentEquipment({ ...currentEquipment, model: e.target.value })}
                 margin="dense"
                 variant="outlined"
                 InputProps={{ maxLength: 100 }}
               />
             </Grid>
             <Grid item xs={12} className={"mt-8"}>
-              <NumberFormatCustom
+              <MaskedTextField
                 fullWidth
                 id="plate"
                 name="plate"
                 label="Placa"
-                value={equipment.plate}
-                onChange={e => setEquipment({ ...equipment, plate: e.target.value })}
+                disabled={loading}
+                value={currentEquipment.plate}
+                mask={[/[a-zA-Z]/, /[a-zA-Z]/, /[a-zA-Z]/, '-', /\d/, /\d/, /\d/, /\d/]}
+                onBlur={e => setcurrentEquipment({ ...currentEquipment, plate: e.target.value })}
                 margin="dense"
                 variant="outlined"
-                format={'   -####'}
               />
             </Grid>
             <Grid item xs={12} className={"mt-8"}>
@@ -230,8 +236,8 @@ const NewCourierModal = ({ open, setOpen }) => {
                 name="year"
                 label="Ano"
                 disabled={loading}
-                value={Number(equipment.year)}
-                onChange={e => setEquipment({ ...equipment, year: Number(e.target.value) })}
+                value={Number(currentEquipment.year)}
+                onChange={e => setcurrentEquipment({ ...currentEquipment, year: Number(e.target.value) })}
                 margin="dense"
                 variant="outlined"
                 InputProps={{ maxLength: 4 }}
@@ -245,27 +251,20 @@ const NewCourierModal = ({ open, setOpen }) => {
             Solicite que eles mudem a senha direto pelo aplicativo.
           </Typography>
         </Grid>
+        <Grid item xs={12} className={"mt-16 text-right"}>
+          <Button
+            disabled={loading}
+            onClick={() => addNewCourier()}
+            color="primary"
+            variant="contained"
+            className={"capitalize"}
+          >
+            {loading ? "Salvando..." : "Salvar"}
+          </Button>
+        </Grid>
       </DialogContent>
-      <DialogActions>
-        <Button
-          disabled={loading}
-          onClick={() => setOpen(false)}
-          color="primary"
-          variant="outlined"
-        >
-          Cancelar
-        </Button>
-        <Button
-          disabled={loading}
-          onClick={() => addNewCourier()}
-          color="primary"
-          variant="contained"
-        >
-          {loading ? "Salvando..." : "Salvar"}
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
 
-export default NewCourierModal
+export default withStyles(styles)(NewCourierModal)

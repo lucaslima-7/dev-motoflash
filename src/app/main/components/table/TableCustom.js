@@ -104,7 +104,7 @@ const TableCustom = ({
         }}
         components={{
           Toolbar: props => (
-            <Grid container>
+            <Grid container className={classes.root}>
               <Grid item xs={12}>
                 <Grid container justify={"space-between"} alignItems={"center"}>
                   {showDateFilter && (
@@ -120,7 +120,7 @@ const TableCustom = ({
                       </div>
                     </Grid>
                   )}
-                  <Grid item xs={showDateFilter ? 5 : 12} className={"px-8"}>
+                  <Grid item xs={showDateFilter ? 5 : 12}>
                     <MTableToolbar {...props} searchFieldStyle={{ minWidth: 200 }} />
                   </Grid>
                 </Grid>

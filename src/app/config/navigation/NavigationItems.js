@@ -6,6 +6,9 @@ import { faUsers, faMotorcycle, faMapMarkerAlt, faCog } from '@fortawesome/free-
 
 const navMenus = [
   {
+    'type': 'divider'
+  },
+  {
     'id': 'users',
     'title': 'Usuários',
     'type': 'item',
@@ -15,7 +18,7 @@ const navMenus = [
   },
   {
     'id': 'couriers',
-    'title': 'Motoboys',
+    'title': 'Entregadores',
     'type': 'item',
     'url': '/couriers',
     auth: pageAccess.couriers,

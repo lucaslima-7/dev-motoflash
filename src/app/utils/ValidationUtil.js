@@ -1,5 +1,66 @@
 import NumberUtil from "./NumberUtil";
 
+export function transformAddressGoogle(place) {
+    let address1 = "";
+    let number = "";
+    let address2 = "";
+    let city = "";
+    let state = "";
+    let zipCode = "";
+    let neighborhood = "";
+
+    for (var i = 0; i < place.address_components.length; i++) {
+        for (var j = 0; j < place.address_components[i].types.length; j++) {
+            if (place.address_components[i].types[j] === "street_number") {
+                number = place.address_components[i].long_name;
+                // addressNumber = place.address_components[i].long_name;
+            } else if (place.address_components[i].types[j] === "route") {
+                address1 = place.address_components[i].short_name;
+            }
+
+            if (place.address_components[i].types[j] === "sublocality_level_1") {
+                neighborhood = place.address_components[i].long_name;
+            }
+
+            if (
+                place.address_components[i].types[j] === "administrative_area_level_2"
+            ) {
+                city = place.address_components[i].long_name;
+            }
+
+            if (
+                place.address_components[i].types[j] === "administrative_area_level_1"
+            ) {
+                state = place.address_components[i].short_name;
+            }
+
+            if (place.address_components[i].types[j] === "postal_code") {
+                zipCode = place.address_components[i].long_name;
+            }
+        }
+    }
+    let location = {
+        geohash: "ABC",
+        geopoint: {
+            latitude: place.geometry.location.lat(),
+            longitude: place.geometry.location.lng()
+        }
+    }
+    let placeId = place.place_id;
+
+    return {
+        address1,
+        number,
+        address2,
+        city,
+        state,
+        zipCode,
+        neighborhood,
+        location,
+        placeId
+    };
+}
+
 export function isValidEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return email && re.test(String(email).toLowerCase());
@@ -15,8 +76,8 @@ export function isValidMobilePhone(mobilePhone) {
     return mobilePhone.length === 11 && re.test(String(mobilePhone))
 }
 
-export function isValidPhone(phone){
-    if(!phone){
+export function isValidPhone(phone) {
+    if (!phone) {
         return false
     }
     var phoneRe = /\d{2}\d{8}$/
@@ -29,7 +90,7 @@ export function isValidZipCode(zipCode) {
 }
 
 export function isNotBlank(text) {
-    return text && text.length > 0
+    return text && text.length >= 3
 }
 
 export function isFullName(string) {
@@ -37,10 +98,10 @@ export function isFullName(string) {
 }
 
 export function isValidPassword(password) {
-    return password.length >= 8
+    return password.length >= 6
 }
 
-export function isValidDate(date){
+export function isValidDate(date) {
     var dateRe = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
 
     if (date && dateRe.test(String(date))) {
@@ -49,7 +110,7 @@ export function isValidDate(date){
 
         // para o IE onde será inserido no formato dd/MM/yyyy
         if (dateArray[0].length !== 4) {
-            date = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0]; 
+            date = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
             // remonto a data no formato yyyy/MM/dd
         } else {
             return false
@@ -67,9 +128,9 @@ export function isValidDate(date){
         var idadeEmpresa = todayUTC.getFullYear() - objDateUTC.getFullYear()
 
         if (Object.prototype.toString.call(objDate) === "[object Date]") {
-            if (isNaN(objDate.getTime()) 
-            || objDateUTC > todayUTC 
-            || idadeEmpresa > 519 ) {
+            if (isNaN(objDate.getTime())
+                || objDateUTC > todayUTC
+                || idadeEmpresa > 519) {
                 return false
             } else {
                 if (objDateUTC.getUTCFullYear() === year && (objDateUTC.getUTCMonth() + 1) === month && objDateUTC.getUTCDate() === day) {
@@ -172,7 +233,7 @@ export function isValidCNPJ(cnpj) {
             pos = 9;
     }
     var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-// eslint-disable-next-line
+    // eslint-disable-next-line
     if (resultado != digitos.charAt(0))
         return false;
 
@@ -231,7 +292,7 @@ export function isValidCPF(cpf) {
     rev = 11 - (add % 11);
     if (rev === 10 || rev === 11)
         rev = 0;
-        // eslint-disable-next-line
+    // eslint-disable-next-line
     if (rev != parseInt(cpf.charAt(10)))
         return false;
     return true;

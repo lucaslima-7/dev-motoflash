@@ -5,8 +5,8 @@ const today = new Date().getTime()
 const initialState = {
   user: {
     uid: "",
-    role: "guest",
-    displayName: "Lucas Lima",
+    role: "admin",
+    displayName: " - ",
     email: "",
     profilePic: ""
   },
