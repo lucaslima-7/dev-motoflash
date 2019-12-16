@@ -153,7 +153,7 @@ const PaymentsPage = ({ classes }) => {
           <Typography variant="h5" color="primary" className="font-900">Pagamentos</Typography>
           <Divider className="mb-12" />
         </Grid>
-        <Grid item xs={12} className="px-12">
+        <Grid item xs={12} className="py-24 px-12">
           {/* <Grid item xs={12} className="mb-12">
           {filterChips && (
             <ExpansionPanel className={classes.panel}>

@@ -2,13 +2,10 @@ import React from "react"
 import Link from "@material-ui/core/Link";
 import Button from "@material-ui/core/Button";
 import history from "@history";
-import Typography from "@material-ui/core/Typography";
-import Chip from "@material-ui/core/Chip";
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
-import clsx from "clsx";
 import ChipStatus from "app/main/components/chipStatus/ChipStatus";
 
 const tableStyle = {
@@ -58,7 +55,7 @@ const columns = [
     title: "Status",
     field: "active",
     render: rowData => (
-      rowData.active ? <ChipStatus status={rowData.active ? 'ATIVO' : 'INATIVO'} /> : " - "
+      <ChipStatus status={rowData.active ? 'ACTIVE' : 'INACTIVE'} />
     ),
     cellStyle: {
       ...tableStyle.cellStyle
@@ -67,20 +64,20 @@ const columns = [
   {
     title: "Localização",
     render: rowData => (
-      rowData.location.geopoint ?
-        <a
-          href={`https://www.google.com/maps?q=${rowData.location.geopoint._lat},${rowData.location.geopoint._long}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          <Button
-            variant={"contained"}
-            color={"primary"}
-            size={"small"}
-            className={"min-w-4 p-4 h-28 w-28 block m-auto"}>
-            <FontAwesomeIcon icon={faMapMarkedAlt} />
-          </Button>
-        </a>
+      rowData.location ?
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          size={"small"}
+          className={"p-4 h-28"}>
+          <a
+            href={`https://www.google.com/maps?q=${rowData.location.geopoint._lat},${rowData.location.geopoint._long}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <FontAwesomeIcon icon={faMapMarkedAlt} className="text-white" />
+          </a>
+        </Button>
         : " - "
     ),
     cellStyle: {

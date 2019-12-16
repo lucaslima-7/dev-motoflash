@@ -11,13 +11,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ChipStatus from 'app/main/components/chipStatus/ChipStatus';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
+import history from "@history";
 import { firestore } from 'firebase';
 import { Paper, CircularProgress } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faEdit, faTrashAlt, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 import ApiUsers from 'app/api/ApiUsers';
-import { isNotBlank, isValidEmail, isValidPassword } from "app/utils/ValidationUtil";
-import { formatAuthError, formatApiError } from "app/utils/FirebaseErrors";
+import { isNotBlank, isValidEmail } from "app/utils/ValidationUtil";
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 const UserDetailsPage = ({ match: { params } }) => {
   const db = firestore()
@@ -82,13 +83,36 @@ const UserDetailsPage = ({ match: { params } }) => {
     }
   }
 
+  const setUserActive = async status => {
+    setLoading(true)
+    const msgVariant = status ? 'reativado' : 'deletado'
+    try {
+      await new ApiUsers().activeUser({ id: params.userId, status })
+      dispatch(Actions.showMessageDialog('success', `Usuário ${msgVariant} com sucesso!`))
+      history.push('/users')
+    } catch (error) {
+      console.log(error)
+      dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <Layout showBackButton={'/users'}>
       <Grid container justify="flex-start" className="px-16 py-12">
         <Grid item xs={12} className="px-24">
-          <Typography variant="h5" color="primary" className="font-900">Usuários</Typography>
+          <Typography variant="h5" color="primary" className="font-900">Usuário</Typography>
           <Divider className="mb-12" />
         </Grid>
+        {!user.active && (
+          <Grid item xs={12} className="mx-8 md:mx-12 my-12" style={{ background: "#FF8A80", borderRadius: 5, borderColor: "#FF8A80" }}>
+            <Typography variant="body1" className={"p-8"} style={{ color: "#B71C1C" }}>
+              <FontAwesomeIcon icon={faTimesCircle} className={"mr-12"} />
+              Este usuário está inativado - para editar seus dados é necessário reativá-lo
+          </Typography>
+          </Grid>
+        )}
         <Grid item xs={12} md={6} lg={4} className="px-12">
           <Paper className="shadow-lighter p-20">
             <Grid container justify={"center"}>
@@ -98,7 +122,7 @@ const UserDetailsPage = ({ match: { params } }) => {
                   id="fullName"
                   name="fullName"
                   label="Nome Completo"
-                  disabled={loading}
+                  disabled={loading || !user.active}
                   value={user.fullName}
                   onChange={e => setUser({ ...user, fullName: e.target.value })}
                   margin="dense"
@@ -112,7 +136,7 @@ const UserDetailsPage = ({ match: { params } }) => {
                   id="email"
                   name="email"
                   label="E-mail"
-                  disabled={loading}
+                  disabled={loading || !user.active}
                   value={user.email}
                   onChange={e => setUser({ ...user, email: e.target.value })}
                   margin="dense"
@@ -126,33 +150,49 @@ const UserDetailsPage = ({ match: { params } }) => {
                     className="ml-4"
                     primary={"Status"}
                     classes={{ primary: 'text-14 font-700 list-item-text-primary' }} />
-                  <ChipStatus status={user.active ? 'ATIVO' : 'INATIVO'} />
+                  <ChipStatus status={user.active ? 'ACTIVE' : 'INACTIVE'} />
                 </ListItem>
               </Grid>
               <Grid item xs={12} className={"mt-16 text-right"}>
-                <Button
-                  disabled={loading}
-                  onClick={() => editUser()}
-                  variant="contained"
-                  className="capitalize text-white bg-red-A400 hover:bg-red-700 mr-8 shadow-none"
-                >
-                  {loading ? (
-                    <CircularProgress size={23} />
-                  ) : (<FontAwesomeIcon icon={faTrashAlt} className="mr-12" />)}
-                  {loading ? "" : "Deletar"}
-                </Button>
-                <Button
-                  disabled={loading}
-                  onClick={() => validateFields()}
-                  color="primary"
-                  variant="contained"
-                  className="capitalize shadow-none"
-                >
-                  {loading ? (
-                    <CircularProgress size={23} />
-                  ) : (<FontAwesomeIcon icon={faEdit} className="mr-12" />)}
-                  {loading ? "" : "Editar"}
-                </Button>
+                {(user && user.active) ? (
+                  <>
+                    <Button
+                      disabled={loading}
+                      onClick={() => setUserActive(false)}
+                      variant="contained"
+                      className="capitalize text-white bg-red-A400 hover:bg-red-700 mr-8 shadow-none"
+                    >
+                      {loading ? (
+                        <CircularProgress size={23} />
+                      ) : (<FontAwesomeIcon icon={faTrashAlt} className="mr-12" />)}
+                      {loading ? "" : "Deletar"}
+                    </Button>
+                    <Button
+                      disabled={loading}
+                      onClick={() => validateFields()}
+                      color="primary"
+                      variant="contained"
+                      className="capitalize shadow-none"
+                    >
+                      {loading ? (
+                        <CircularProgress size={23} />
+                      ) : (<FontAwesomeIcon icon={faEdit} className="mr-12" />)}
+                      {loading ? "" : "Editar"}
+                    </Button>
+                  </>
+                ) : (
+                    <Button
+                      disabled={loading}
+                      onClick={() => setUserActive(true)}
+                      variant="contained"
+                      className="capitalize text-white bg-green-A400 hover:bg-green-700 mr-8 shadow-none"
+                    >
+                      {loading ? (
+                        <CircularProgress size={23} />
+                      ) : (<FontAwesomeIcon icon={faCheck} className="mr-12" />)}
+                      {loading ? "" : "Ativar"}
+                    </Button>
+                  )}
               </Grid>
             </Grid>
           </Paper>

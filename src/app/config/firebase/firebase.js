@@ -39,6 +39,21 @@ class firebaseService {
       history.push('/')
     });
   }
+
+  getUserToken = () => {
+    if (!this.auth) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      this.auth.currentUser.getIdToken(true)
+        .then((resp) => {
+          resolve(resp)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  }
 }
 
 const instance = new firebaseService();

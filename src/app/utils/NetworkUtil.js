@@ -1,12 +1,14 @@
 import axios from "axios";
+import firebaseService from "app/config/firebase/index";
 
 // @see: https://github.com/mzabriskie/axios#axios-api
-export function request(baseURL, method, url, config = {}, options = {}) {
+const request = async (baseURL, method, url, config = {}, options = {}) => {
   // console.log(config)
   const { params, data, headers, maxContentLength } = config;
 
   // non-axios specific params
   const { suppressAuth } = options;
+  const token = await firebaseService.getUserToken()
 
   return new Promise((resolve, reject) => {
     axios({
@@ -17,7 +19,7 @@ export function request(baseURL, method, url, config = {}, options = {}) {
       data: data,
       headers: suppressAuth
         ? headers
-        : { ...headers },
+        : { ...headers, accesstoken: token },
       maxContentLength
     })
       .then(response => {

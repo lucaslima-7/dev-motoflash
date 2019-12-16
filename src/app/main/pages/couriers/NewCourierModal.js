@@ -18,8 +18,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import NumberFormatCustom from 'app/main/components/inputs/numberInput/NumberFormatCustom';
 import ApiCourier from "app/api/ApiCouriers";
-import { isNotBlank, isValidEmail, isValidPassword } from "app/utils/ValidationUtil";
-import { formatAuthError, formatApiError } from "app/utils/FirebaseErrors";
+import { formatApiError } from "app/utils/FirebaseErrors";
 import withStyles from "@material-ui/core/styles/withStyles";
 import MaskedTextField from "app/main/components/inputs/maskedInput/MaskedTextField";
 
@@ -48,10 +47,6 @@ const NewCourierModal = ({ classes, open, setOpen }) => {
     plate: "",
     year: new Date().getFullYear()
   })
-
-  const validateFields = () => {
-
-  }
 
   const addNewCourier = async () => {
     setLoading(true)

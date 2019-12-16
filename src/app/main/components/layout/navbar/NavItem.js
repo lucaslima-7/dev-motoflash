@@ -1,12 +1,11 @@
 import React from 'react';
-import { Icon, ListItem, ListItemText } from '@material-ui/core';
+import { ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import NavLinkAdapter from './NavLinkAdapter';
 import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import includes from 'lodash/includes';
-import defaultTheme from 'app/config/themes/defaultTheme';
 
 const useStyles = makeStyles(theme => ({
   item: {

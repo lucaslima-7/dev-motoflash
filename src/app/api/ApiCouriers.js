@@ -1,4 +1,4 @@
-import { get, post } from "app/utils/NetworkUtil";
+import { post, put } from "app/utils/NetworkUtil";
 import ApiConfig from "./ApiConfig";
 
 export default class ApiCourier extends ApiConfig {
@@ -42,5 +42,16 @@ export default class ApiCourier extends ApiConfig {
 
     const url = `/couriers`
     return post(this.baseUrl, url, config)
+  }
+
+  activeCourier({ id, status }) {
+    const config = {
+      data: {
+        active: status
+      }
+    }
+
+    const url = `/couriers/${id}/active`
+    return put(this.baseUrl, url, config)
   }
 }

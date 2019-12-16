@@ -1,11 +1,8 @@
 import React from "react"
 import Link from "@material-ui/core/Link";
 import history from "@history";
-import Button from "@material-ui/core/Button";
 import { unixtimestampToDate } from "app/utils/DateUtil"
 import defaultTheme from 'app/config/themes/defaultTheme';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 
 const tableStyle = {
   cellStyle: { fontSize: 14, paddingTop: 8, paddingBottom: 8 },

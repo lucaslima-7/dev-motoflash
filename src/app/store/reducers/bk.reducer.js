@@ -4,11 +4,12 @@ const today = new Date().getTime()
 
 const initialState = {
   user: {
-    uid: "",
+    id: "",
     role: "admin",
     displayName: " - ",
     email: "",
-    profilePic: ""
+    profilePic: "",
+    phoneNumber: ""
   },
   loading: false,
   navMenu: {

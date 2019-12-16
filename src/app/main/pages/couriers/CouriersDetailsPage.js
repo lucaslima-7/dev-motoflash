@@ -10,11 +10,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
+import history from "@history";
 import ChipStatus from 'app/main/components/chipStatus/ChipStatus';
 import { firestore } from 'firebase';
 import { Paper, CircularProgress } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faEdit, faTrashAlt, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { isNotBlank, isValidEmail } from "app/utils/ValidationUtil";
 import ApiCourier from 'app/api/ApiCouriers';
 
@@ -83,9 +85,24 @@ const CouriersDetailsPage = ({ match: { params } }) => {
     try {
       await new ApiCourier().editUser({
         options,
-        id: params.userId
+        id: params.courierId
       })
       dispatch(Actions.showMessageDialog('success', 'Usuário editado com sucesso'))
+    } catch (error) {
+      console.log(error)
+      dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const setCourierActive = async status => {
+    setLoading(true)
+    const msgVariant = status ? 'reativado' : 'deletado'
+    try {
+      await new ApiCourier().activeCourier({ id: params.courierId, status })
+      dispatch(Actions.showMessageDialog('success', `Entregador ${msgVariant} com sucesso!`))
+      history.push('/couriers')
     } catch (error) {
       console.log(error)
       dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
@@ -98,9 +115,17 @@ const CouriersDetailsPage = ({ match: { params } }) => {
     <Layout showBackButton={'/couriers'}>
       <Grid container justify="flex-start" className="px-16 py-12">
         <Grid item xs={12} className="px-24">
-          <Typography variant="h5" color="primary" className="font-900">Usuários</Typography>
+          <Typography variant="h5" color="primary" className="font-900">Entregador</Typography>
           <Divider className="mb-12" />
         </Grid>
+        {!courier.active && (
+          <Grid item xs={12} className="mx-8 md:mx-12 my-12" style={{ background: "#FF8A80", borderRadius: 5, borderColor: "#FF8A80" }}>
+            <Typography variant="body1" className={"p-8"} style={{ color: "#B71C1C" }}>
+              <FontAwesomeIcon icon={faTimesCircle} className={"mr-12"} />
+              Este entregador está inativado - para editar seus dados é necessário reativá-lo
+          </Typography>
+          </Grid>
+        )}
         <Grid item xs={12} md={6} lg={4} className="px-12">
           <Paper className="shadow-lighter p-20">
             <Grid container justify={"center"}>
@@ -110,7 +135,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                   id="fullName"
                   name="fullName"
                   label="Nome Completo"
-                  disabled={loading}
+                  disabled={loading || !courier.active}
                   value={courier.fullName}
                   onChange={e => setCourier({ ...courier, fullName: e.target.value })}
                   margin="dense"
@@ -124,7 +149,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                   id="email"
                   name="email"
                   label="E-mail"
-                  disabled={loading}
+                  disabled={loading || !courier.active}
                   value={courier.email}
                   onChange={e => setCourier({ ...courier, email: e.target.value })}
                   margin="dense"
@@ -138,33 +163,49 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                     className="ml-4"
                     primary={"Status"}
                     classes={{ primary: 'text-14 font-700 list-item-text-primary' }} />
-                  <ChipStatus status={courier.active ? 'ATIVO' : 'INATIVO'} />
+                  <ChipStatus status={courier.active ? 'ACTIVE' : 'INACTIVE'} />
                 </ListItem>
               </Grid>
               <Grid item xs={12} className={"mt-16 text-right"}>
-                <Button
-                  disabled={loading}
-                  onClick={() => editCourier()}
-                  variant="contained"
-                  className="capitalize text-white bg-red-A400 hover:bg-red-700 mr-8"
-                >
-                  {loading ? (
-                    <CircularProgress size={23} />
-                  ) : (<FontAwesomeIcon icon={faTrashAlt} className="mr-12" />)}
-                  {loading ? "" : "Deletar"}
-                </Button>
-                <Button
-                  disabled={loading}
-                  onClick={() => editCourier()}
-                  color="primary"
-                  variant="contained"
-                  className="capitalize shadow-none"
-                >
-                  {loading ? (
-                    <CircularProgress size={23} />
-                  ) : (<FontAwesomeIcon icon={faEdit} className="mr-12" />)}
-                  {loading ? "" : "Editar"}
-                </Button>
+                {(courier && courier.active) ? (
+                  <>
+                    <Button
+                      disabled={loading}
+                      onClick={() => setCourierActive(false)}
+                      variant="contained"
+                      className="capitalize text-white bg-red-A400 hover:bg-red-700 mr-8 shadow-none"
+                    >
+                      {loading ? (
+                        <CircularProgress size={23} />
+                      ) : (<FontAwesomeIcon icon={faTrashAlt} className="mr-12" />)}
+                      {loading ? "" : "Deletar"}
+                    </Button>
+                    <Button
+                      disabled={loading}
+                      onClick={() => validateFields()}
+                      color="primary"
+                      variant="contained"
+                      className="capitalize shadow-none"
+                    >
+                      {loading ? (
+                        <CircularProgress size={23} />
+                      ) : (<FontAwesomeIcon icon={faEdit} className="mr-12" />)}
+                      {loading ? "" : "Editar"}
+                    </Button>
+                  </>
+                ) : (
+                    <Button
+                      disabled={loading}
+                      onClick={() => setCourierActive(true)}
+                      variant="contained"
+                      className="capitalize text-white bg-green-A400 hover:bg-green-700 mr-8 shadow-none"
+                    >
+                      {loading ? (
+                        <CircularProgress size={23} />
+                      ) : (<FontAwesomeIcon icon={faCheck} className="mr-12" />)}
+                      {loading ? "" : "Ativar"}
+                    </Button>
+                  )}
               </Grid>
             </Grid>
           </Paper>

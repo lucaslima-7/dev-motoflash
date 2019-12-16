@@ -4,6 +4,7 @@ import history from "@history";
 import { unixtimestampToDate } from "app/utils/DateUtil";
 import NumberUtil from "app/utils/NumberUtil";
 import defaultTheme from 'app/config/themes/defaultTheme';
+import ChipStatus from "app/main/components/chipStatus/ChipStatus";
 
 const tableStyle = {
   cellStyle: { fontSize: 14, paddingTop: 8, paddingBottom: 8 },
@@ -21,7 +22,7 @@ const columns = [
   {
     title: "Valor",
     render: rowData => (
-      rowData.amount ? NumberUtil.getDoubleAsCurrency(rowData.amount) : " - "
+      NumberUtil.getDoubleAsCurrency(rowData.amount)
     ),
     cellStyle: {
       ...tableStyle.cellStyle
@@ -30,14 +31,14 @@ const columns = [
   {
     title: "Pago - Motoboy",
     render: rowData => (
-      rowData.courierAmount ? NumberUtil.getDoubleAsCurrency(rowData.courierAmount) : " - "
+      NumberUtil.getDoubleAsCurrency(rowData.courierAmount)
     ),
     cellStyle: {
       ...tableStyle.cellStyle
     }
   },
   {
-    title: "ID Motoboy",
+    title: "Motoboy",
     render: rowData => (
       <>
         {rowData.courierId ? (
@@ -46,7 +47,7 @@ const columns = [
             onClick={() => history.push('/couriers/' + rowData.courierId)}
             className={"cursor-pointer font-800"}
             color="primary">
-            {rowData.courierId}
+            {rowData.courierName}
           </Link>
         ) : (
             " - "
@@ -58,7 +59,7 @@ const columns = [
     }
   },
   {
-    title: "ID Viagem",
+    title: "ID Entrega",
     render: rowData => (
       <>
         {rowData.workOrderId ? (
@@ -73,6 +74,15 @@ const columns = [
             " - "
           )}
       </>
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
+    }
+  },
+  {
+    title: "Status",
+    render: rowData => (
+      <ChipStatus status={rowData.status} />
     ),
     cellStyle: {
       ...tableStyle.cellStyle

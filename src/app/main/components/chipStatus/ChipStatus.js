@@ -35,9 +35,9 @@ const ChipStatus = ({ classes, status }) => {
       case 'PAY':
         return "text-green-900 bg-green-A100"
       case 'ACTIVE':
-        return "text-red-900 bg-red-A100"
-      case 'INACTIVE':
         return "text-green-900 bg-green-A100"
+      case 'INACTIVE':
+        return "text-red-900 bg-red-A100"
       default:
         return "text-green-900 bg-green-A100"
     }

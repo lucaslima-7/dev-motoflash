@@ -8,8 +8,6 @@ import {
   Typography,
   Divider,
   Button,
-  Card,
-  CardContent
 } from "@material-ui/core";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
@@ -17,7 +15,6 @@ import TableCustom from 'app/main/components/table/TableCustom';
 import { couriersTableConfig } from './couriersTableConfig';
 import Layout from 'app/main/components/layout/Layout';
 import { firestore } from 'firebase';
-import clsx from 'clsx';
 import defaultTheme from 'app/config/themes/defaultTheme';
 import NewCourierModal from './NewCourierModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -164,7 +161,7 @@ const CouriersPage = ({ classes, history }) => {
           <Typography variant="h5" color="primary" className="font-900">Entregadores</Typography>
           <Divider className="mb-12" />
         </Grid>
-        <Grid item xs={12} className="px-12">
+        <Grid item xs={12} className="py-24 px-12">
           {/* <Grid item xs={12} className="mb-12">
           {filterChips && (
             <ExpansionPanel className={classes.panel}>

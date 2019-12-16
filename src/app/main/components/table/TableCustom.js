@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Actions from "app/store/actions";
-import MaterialTable, { MTablePagination } from "material-table";
+import MaterialTable from "material-table";
 import {
   Grid,
   withStyles,
@@ -16,7 +16,6 @@ import {
   TablePagination
 } from "@material-ui/core"
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import defaultTheme from "app/config/themes/defaultTheme";
 import DateFnsUtils from '@date-io/date-fns';
 import { MTableToolbar } from "material-table";
 import { getLongFromDate, unixtimestampToDate } from "app/utils/DateUtil";
@@ -47,8 +46,8 @@ const TableCustom = ({
   const [editMode, setEditMode] = useState(false)
   let options = {
     ...config.options,
-    pageSize: 15,
-    pageSizeOptions: [15, 50, 100],
+    pageSize: 10,
+    pageSizeOptions: [10, 50, 100],
     sorting: false,
     debounceInterval: 1000,
     loadingType: 'linear',

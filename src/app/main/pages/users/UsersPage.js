@@ -42,7 +42,7 @@ const UsersPage = ({ classes, history }) => {
   const newStatusList = ["AVAILABLE", "CANCELED"]
   const [offset, setOffset] = useState(0)
   const [modalOpen, setModalOpen] = useState(false)
-  const [search, setSearch] = useState("")
+  const search = ""
 
   const userQuery = async query => {
     if (search.length > 0) {
@@ -82,24 +82,20 @@ const UsersPage = ({ classes, history }) => {
     })
   }
 
-  const getUserByName = () => {
-
-  }
-
-  const getAlgoliaData = query => {
-    return new Promise(async resolve => {
-      const data = await getUserByName({
-        offset: query.page * query.pageSize,
-        limit: query.pageSize,
-        search
-      })
-      resolve({
-        data: data,
-        page: query.page,
-        totalCount: data.nbHits
-      })
-    })
-  }
+  // const getAlgoliaData = query => {
+  //   return new Promise(async resolve => {
+  //     const data = await getUserByName({
+  //       offset: query.page * query.pageSize,
+  //       limit: query.pageSize,
+  //       search
+  //     })
+  //     resolve({
+  //       data: data,
+  //       page: query.page,
+  //       totalCount: data.nbHits
+  //     })
+  //   })
+  // }
 
   const getUserData = async (query, type, page) => {
     if (!count) {
@@ -183,7 +179,7 @@ const UsersPage = ({ classes, history }) => {
           <Typography variant="h5" color="primary" className="font-900">Usuários</Typography>
           <Divider className="mb-12" />
         </Grid>
-        <Grid item xs={12} className="px-12">
+        <Grid item xs={12} className="py-24 px-12">
           {/* <Grid item xs={12} className="mb-12">
             {filterChips && (
               <ExpansionPanel className={classes.panel}>

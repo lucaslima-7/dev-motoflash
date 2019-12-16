@@ -43,8 +43,6 @@ const LoginForm = ({ history }) => {
     setLoading(true)
     try {
       await auth().signInWithEmailAndPassword(email, password)
-      dispatch(Actions.showMessageDialog('info', 'Bem Vindo de Volta!'))
-      history.push('/users')
     } catch (error) {
       dispatch(Actions.showMessageDialog('error', formatAuthError(error)))
     } finally {

@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import * as Actions from "app/store/actions";
 import history from "@history";
 import firebaseService from "app/config/firebase/index";
+import jwt_decode from 'jwt-decode';
 
 class Authorization extends Component {
   constructor(props) {
@@ -16,24 +17,30 @@ class Authorization extends Component {
 
     firebaseService.onAuthStateChanged(authUser => {
       if (authUser) {
-        const user = {
-          uid: authUser.uid,
-          role: "admin",
-          displayName: authUser.displayName ? authUser.displayName : "User",
-          email: authUser.email,
-          profilePic: "/assets/images/avatar/profile.jpg"
-        }
-        this.props.setUserData(user)
-        history.push('/users')
-        // TODO Snackbar Logando...
-        // firebaseService.getUserData(authUser.uid).then(user => {
-        //   console.log(user, authUser);
-
-        //   console.log({ message: "Logged in with Firebase" });
-        //   // TODO snackbar com sucesso
-        // });
+        firebaseService.getUserToken().then(resp => {
+          const decoded = jwt_decode(resp)
+          console.log(decoded)
+          const user = {
+            id: decoded.user_id,
+            role: decoded.admin ? "admin" : "user",
+            displayName: decoded.name ? decoded.name : "User",
+            email: decoded.email,
+            phoneNumber: decoded.phone_number ? authUser.phone_number : "",
+            profilePic: decoded.picture ? decoded.picture : "/assets/images/avatar/profile.jpg",
+            accessToken: resp,
+          }
+          this.props.setUserData(user)
+          localStorage.setItem('bk', JSON.stringify(user))
+          if (decoded.admin) {
+            this.props.showTopMessage("success", `Bem-vindo de volta ${decoded.name}`)
+            history.push('/users')
+          } else {
+            this.props.showTopMessage("error", `Usuário não autorizado`)
+            history.push('/')
+          }
+        })
       } else {
-        localStorage.removeItem("user")
+        localStorage.removeItem("bk")
         // TODO snackbar falando que o usuário foi deslogado
       }
     });
@@ -51,6 +58,7 @@ function mapDispatchToProps(dispatch) {
     {
       // logout: Actions.logoutUser,
       setUserData: Actions.setUserData,
+      showTopMessage: Actions.showMessageDialog
     },
     dispatch
   );

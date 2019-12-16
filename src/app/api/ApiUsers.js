@@ -25,4 +25,15 @@ export default class ApiUsers extends ApiConfig {
     const url = `/users/${id}`
     return put(this.baseUrl, url, config)
   }
+
+  activeUser({ id, status }) {
+    const config = {
+      data: {
+        active: status
+      }
+    }
+
+    const url = `/users/${id}/active`
+    return put(this.baseUrl, url, config)
+  }
 }

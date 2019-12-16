@@ -14,7 +14,8 @@ function NotFoundPage() {
         </Fade>
         <Fade delay={500}>
           <Typography variant="h4" className="mb-16">
-            Parece que você foi além dos limites 😅
+            Parece que você foi além dos limites
+            <span role="img" aria-label="confused face emoji">😅</span>
           </Typography>
         </Fade>
         <Link className="font-medium" to="/">Voltar para a Home</Link>
