@@ -65,7 +65,7 @@ const MessageAlert = memo(({ classes }) => {
           </span>
         }
         action={[
-          <IconButton key="close" aria-label="close" color="inherit" onClick={() => Actions.clearMessageDialog()}>
+          <IconButton key="close" aria-label="close" color="inherit" onClick={() => dispatch(Actions.clearMessageDialog())}>
             <CloseIcon className={classes.icon} />
           </IconButton>,
         ]}

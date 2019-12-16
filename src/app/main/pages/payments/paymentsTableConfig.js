@@ -5,6 +5,7 @@ import { unixtimestampToDate } from "app/utils/DateUtil";
 import NumberUtil from "app/utils/NumberUtil";
 import defaultTheme from 'app/config/themes/defaultTheme';
 import ChipStatus from "app/main/components/chipStatus/ChipStatus";
+import { whatsappApi } from "app/api/ApiWhatsapp";
 
 const tableStyle = {
   cellStyle: { fontSize: 14, paddingTop: 8, paddingBottom: 8 },
@@ -56,6 +57,31 @@ const columns = [
     ),
     cellStyle: {
       ...tableStyle.cellStyle
+    }
+  },
+  {
+    title: "WhatsApp",
+    render: rowData => (
+      <>
+        {rowData.courierMobilePhone ? (
+          <Link href={whatsappApi(`${rowData.courierMobilePhone.replace(/\D/g, "")}`)}
+            target="_blank"
+            style={{ color: defaultTheme.palette.primary.main }}
+            className={"cursor-pointer font-800"}
+            rel="noopener noreferrer"
+            color={"primary"}>
+            {rowData.courierMobilePhone}
+          </Link>
+        ) : (
+            " - "
+          )}
+      </>
+    ),
+    cellStyle: {
+      ...tableStyle.cellStyle
+    },
+    headerStyle: {
+      ...tableStyle.headerStyle
     }
   },
   {

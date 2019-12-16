@@ -44,6 +44,19 @@ export default class ApiCourier extends ApiConfig {
     return post(this.baseUrl, url, config)
   }
 
+  editCourier({ id, options }) {
+    const config = {
+      data: {
+        courier: {
+          ...options
+        }
+      }
+    }
+
+    const url = `/couriers/${id}`
+    return put(this.baseUrl, url, config)
+  }
+
   activeCourier({ id, status }) {
     const config = {
       data: {

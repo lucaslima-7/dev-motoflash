@@ -120,7 +120,7 @@ const TableCustom = ({
                     </Grid>
                   )}
                   <Grid item xs={showDateFilter ? 5 : 12}>
-                    <MTableToolbar {...props} searchFieldStyle={{ minWidth: 200 }} />
+                    <MTableToolbar {...props} searchFieldStyle={{ minWidth: 200, display: "none" }} />
                   </Grid>
                 </Grid>
               </Grid>

@@ -19,6 +19,7 @@ import { faEdit, faTrashAlt, faTimesCircle } from '@fortawesome/free-regular-svg
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { isNotBlank, isValidEmail } from "app/utils/ValidationUtil";
 import ApiCourier from 'app/api/ApiCouriers';
+import NumberFormatCustom from 'app/main/components/inputs/numberInput/NumberFormatCustom';
 
 const CouriersDetailsPage = ({ match: { params } }) => {
   const db = firestore()
@@ -26,6 +27,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
   const [courier, setCourier] = useState({
     fullName: "",
     email: "",
+    mobilePhone: "",
     active: true
   })
   const [courierEquipment, setEquipment] = useState({
@@ -46,6 +48,7 @@ const CouriersDetailsPage = ({ match: { params } }) => {
         setCourier({
           fullName: snapshot.data().name,
           email: snapshot.data().email,
+          mobilePhone: snapshot.data().mobilePhone.substring(3),
           active: snapshot.data().active
         })
         setEquipment({
@@ -79,17 +82,20 @@ const CouriersDetailsPage = ({ match: { params } }) => {
   const editCourier = async () => {
     const options = {
       name: courier.fullName,
-      email: courier.email
+      email: courier.email,
+      mobilePhone: `+55${courier.mobilePhone}`,
+      profilePhoto: "https://google.com.br",
+      active: true
     }
     setLoading(true)
     try {
-      await new ApiCourier().editUser({
+      await new ApiCourier().editCourier({
         options,
         id: params.courierId
       })
-      dispatch(Actions.showMessageDialog('success', 'Usuário editado com sucesso'))
+      dispatch(Actions.showMessageDialog('success', 'Entregador editado com sucesso'))
+      history.push('/couriers')
     } catch (error) {
-      console.log(error)
       dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
     } finally {
       setLoading(false)
@@ -104,7 +110,6 @@ const CouriersDetailsPage = ({ match: { params } }) => {
       dispatch(Actions.showMessageDialog('success', `Entregador ${msgVariant} com sucesso!`))
       history.push('/couriers')
     } catch (error) {
-      console.log(error)
       dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
     } finally {
       setLoading(false)
@@ -155,6 +160,20 @@ const CouriersDetailsPage = ({ match: { params } }) => {
                   margin="dense"
                   variant="outlined"
                   InputProps={{ maxLength: 200 }}
+                />
+              </Grid>
+              <Grid item xs={12} className={"mt-8"}>
+                <NumberFormatCustom
+                  fullWidth
+                  disabled={loading || !courier.active}
+                  id="mobilePhone"
+                  name="mobilePhone"
+                  label="Mobile Phone"
+                  value={courier.mobilePhone}
+                  format={'(##) #####-####'}
+                  onBlur={e => setCourier({ ...courier, mobilePhone: e.target.value.replace(/\D+/g, '') })}
+                  margin="dense"
+                  variant="outlined"
                 />
               </Grid>
               <Grid item xs={12} className={"mt-8"}>

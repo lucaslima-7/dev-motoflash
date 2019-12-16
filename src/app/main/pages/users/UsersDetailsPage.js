@@ -19,6 +19,7 @@ import { faEdit, faTrashAlt, faTimesCircle } from '@fortawesome/free-regular-svg
 import ApiUsers from 'app/api/ApiUsers';
 import { isNotBlank, isValidEmail } from "app/utils/ValidationUtil";
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import NumberFormatCustom from 'app/main/components/inputs/numberInput/NumberFormatCustom';
 
 const UserDetailsPage = ({ match: { params } }) => {
   const db = firestore()
@@ -26,6 +27,7 @@ const UserDetailsPage = ({ match: { params } }) => {
   const [user, setUser] = useState({
     fullName: "",
     email: "",
+    mobilePhone: "",
     active: true
   })
   const [loading, setLoading] = useState(false)
@@ -39,6 +41,7 @@ const UserDetailsPage = ({ match: { params } }) => {
         setUser({
           fullName: snapshot.data().name,
           email: snapshot.data().email,
+          mobilePhone: snapshot.data().mobilePhone && snapshot.data().mobilePhone.substring(3),
           active: snapshot.data().active
         })
       } catch (error) {
@@ -66,7 +69,10 @@ const UserDetailsPage = ({ match: { params } }) => {
   const editUser = async () => {
     const options = {
       name: user.fullName,
-      email: user.email
+      email: user.email,
+      mobilePhone: `+55${user.mobilePhone}`,
+      profilePhoto: "https://google.com.br",
+      active: true
     }
     setLoading(true)
     try {
@@ -75,8 +81,8 @@ const UserDetailsPage = ({ match: { params } }) => {
         id: params.userId
       })
       dispatch(Actions.showMessageDialog('success', 'Usuário editado com sucesso'))
+      history.push('/users')
     } catch (error) {
-      console.log(error)
       dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
     } finally {
       setLoading(false)
@@ -91,7 +97,6 @@ const UserDetailsPage = ({ match: { params } }) => {
       dispatch(Actions.showMessageDialog('success', `Usuário ${msgVariant} com sucesso!`))
       history.push('/users')
     } catch (error) {
-      console.log(error)
       dispatch(Actions.showMessageDialog('error', 'Ocorreu um erro, tente novamente'))
     } finally {
       setLoading(false)
@@ -142,6 +147,20 @@ const UserDetailsPage = ({ match: { params } }) => {
                   margin="dense"
                   variant="outlined"
                   InputProps={{ maxLength: 200 }}
+                />
+              </Grid>
+              <Grid item xs={12} className={"mt-8"}>
+                <NumberFormatCustom
+                  fullWidth
+                  disabled={loading || !user.active}
+                  id="mobilePhone"
+                  name="mobilePhone"
+                  label="Mobile Phone"
+                  value={user.mobilePhone}
+                  format={'(##) #####-####'}
+                  onBlur={e => setUser({ ...user, mobilePhone: e.target.value.replace(/\D+/g, '') })}
+                  margin="dense"
+                  variant="outlined"
                 />
               </Grid>
               <Grid item xs={12} className={"mt-8"}>
